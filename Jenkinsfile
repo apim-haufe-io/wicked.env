@@ -6,6 +6,7 @@ node('docker') {
 
     def dockerTag = env.BRANCH_NAME.replaceAll('/', '-')
 
+    echo 'Building docker tag: ' + dockerTag
     env.DOCKER_TAG = dockerTag
 
     stage('Build and Push') {
