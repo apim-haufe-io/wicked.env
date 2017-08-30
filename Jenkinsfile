@@ -11,6 +11,12 @@ node('docker') {
     env.DOCKER_TAG = dockerTag
 
     stage('Build and Push') {
-        sh './build.sh'
+        withCredentials([
+            usernamePassword(credentialsId: 'dockerhub_wicked', usernameVariable: 'DOCKER_REGISTRY_USER', passwordVariable: 'DOCKER_REGISTRY_PASSWORD')
+        ]) {
+            
+            sh './build.sh'
+
+        }
     }
 }
