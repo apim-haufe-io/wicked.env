@@ -1,4 +1,5 @@
-node('build-jenkins-4-test') {
+//node('build-jenkins-4-test') {
+node('docker') {
 
     stage('Checkout') {
         checkout scm
