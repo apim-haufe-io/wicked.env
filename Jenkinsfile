@@ -15,7 +15,7 @@ node('docker') {
             usernamePassword(credentialsId: 'dockerhub_wicked', usernameVariable: 'DOCKER_REGISTRY_USER', passwordVariable: 'DOCKER_REGISTRY_PASSWORD')
         ]) {
             
-            sh './build.sh'
+            sh './build.sh --push'
 
         }
     }
