@@ -1,3 +1,9 @@
+properties([
+    pipelineTriggers([
+        [$class: "SCMTrigger", scmpoll_spec: "H/10 * * * *"]
+    ])
+])
+
 //node('build-jenkins-4-test') {
 node('docker') {
 
