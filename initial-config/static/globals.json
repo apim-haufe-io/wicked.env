@@ -14,8 +14,7 @@
         "kongAdapterUrl": "$PORTAL_KONG_ADAPTER_URL",
         "kongAdminUrl": "$PORTAL_KONG_ADMIN_URL",
         "mailerUrl": "$PORTAL_MAILER_URL",
-        "chatbotUrl": "$PORTAL_CHATBOT_URL",
-        "kongOAuth2Url": "$PORTAL_KONG_OAUTH2_URL"
+        "chatbotUrl": "$PORTAL_CHATBOT_URL"
     },
     "sessionStore": {
         "type": "$PORTAL_SESSIONSTORE_TYPE",

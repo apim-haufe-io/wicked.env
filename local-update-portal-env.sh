@@ -24,4 +24,13 @@ for wickedDir in \
     fi
 done
 
+for wickedDir in \
+    "wicked.portal-test/portal-api"; do
+
+    if [ -d "../$wickedDir" ]; then 
+        echo Updating $wickedDir
+        pushd ../$wickedDir > /dev/null && npm install ../../portal-env.tgz && popd > /dev/null 
+    fi
+done
+
 exit 1

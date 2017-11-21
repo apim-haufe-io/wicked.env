@@ -245,11 +245,11 @@ function updateStep10_v1_0_0(targetConfig, sourceConfig, configKey) {
     // Now do some env file updating...
     const updateEnv = function (source, target) {
         let updated = false;
-        if (!target.PORTAL_KONG_OAUTH2_URL) {
-            debug('Adding ' + JSON.stringify(source.PORTAL_KONG_OAUTH2_URL));
-            target.PORTAL_KONG_OAUTH2_URL = source.PORTAL_KONG_OAUTH2_URL;
-            updated = true;
-        }
+        // if (!target.PORTAL_KONG_OAUTH2_URL) {
+        //     debug('Adding ' + JSON.stringify(source.PORTAL_KONG_OAUTH2_URL));
+        //     target.PORTAL_KONG_OAUTH2_URL = source.PORTAL_KONG_OAUTH2_URL;
+        //     updated = true;
+        // }
         if (!target.PORTAL_AUTHSERVER_URL) {
             debug('Adding ' + JSON.stringify(source.PORTAL_AUTHSERVER_URL));
             target.PORTAL_AUTHSERVER_URL = source.PORTAL_AUTHSERVER_URL;
@@ -268,6 +268,7 @@ function updateStep10_v1_0_0(targetConfig, sourceConfig, configKey) {
     if (!targetDefaultEnv.K8S_NAMESPACE)
         targetDefaultEnv.K8S_NAMESPACE = sourceDefaultEnv.K8S_NAMESPACE;
     saveEnv(targetConfig, 'default', targetDefaultEnv);
+    debug(targetDefaultEnv);
 
     // Also for k8s env
     const sourceK8sEnv = loadEnv(sourceConfig, 'k8s');
@@ -283,18 +284,18 @@ function updateStep10_v1_0_0(targetConfig, sourceConfig, configKey) {
     if (existsEnv(targetConfig, 'localhost')) {
         const localEnv = loadEnv(targetConfig, 'localhost');
         // Special handling of new components
-        if (!localEnv.PORTAL_KONG_OAUTH2_URL) {
-            localEnv.PORTAL_KONG_OAUTH2_URL = {
-                value: "http://${LOCAL_IP}:3002"
-            };
-        }
+        // if (!localEnv.PORTAL_KONG_OAUTH2_URL) {
+        //     localEnv.PORTAL_KONG_OAUTH2_URL = {
+        //         value: "http://${LOCAL_IP}:3002"
+        //     };
+        // }
         if (!localEnv.PORTAL_AUTHSERVER_URL) {
             localEnv.PORTAL_AUTHSERVER_URL = {
                 value: "http://${LOCAL_IP}:3005"
             };
+            saveEnv(targetConfig, 'localhost', localEnv);
         }
     }
-
 
     const kickstarter = loadKickstarter(targetConfig);
     if (!kickstarter.envs.find(e => e === 'k8s')) {

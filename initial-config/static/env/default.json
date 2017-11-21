@@ -41,10 +41,6 @@
         "encrypted": false,
         "value": "http://portal-kong-adapter:3002"
     },
-    "PORTAL_KONG_OAUTH2_URL": {
-        "encrypted": false,
-        "value": "http://portal-kong-oauth2:3006"
-    },
     "PORTAL_KONG_ADMIN_URL": {
         "encrypted": false,
         "value": "http://kong:8001"
