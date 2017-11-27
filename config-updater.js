@@ -192,7 +192,10 @@ function updateApiConfigs(targetConfig, updateApiConfig) {
         var authServerId = authServers[i];
         var authServer = loadAuthServer(targetConfig, authServerId);
         if (authServer.config && authServer.config.api) {
-            authServer.config.api = updateApiConfig(authServer.config.api);
+            const apiConfig = authServer.config;
+            const { api, plugins } = updateApiConfig(apiConfig.api, apiConfig.plugins);
+            apiConfig.api = api;
+            apiConfig.plugins = plugins;
             saveAuthServer(targetConfig, authServerId, authServer);
         }
     }
