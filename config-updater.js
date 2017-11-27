@@ -13,7 +13,8 @@ var updateSteps = {
     3: updateStep3_Oct2016,
     4: updateStep4_Mar2017,
     5: updateStep5_Apr2017,
-    6: updateStep6_Aug2017
+    6: updateStep6_Aug2017,
+    7: updateStep7_Nov2017
 };
 
 updater.updateConfig = function (staticConfigPath, initialStaticConfigPath, configKey) {
@@ -161,6 +162,67 @@ function loadAuthServer(config, authServerId) {
 function saveAuthServer(config, authServerId, authServer) {
     debug('saveAuthServer() - ' + authServerId);
     fs.writeFileSync(path.join(config.authServersDir, authServerId + '.json'), JSON.stringify(authServer, null, 2));
+}
+
+function updateApiConfigs(targetConfig, updateApiConfig) {
+    debug('updateApiConfigs()');
+    const apis = loadApis(targetConfig);
+    for (let i = 0; i < apis.apis.length; ++i) {
+        const apiConfig = loadApiConfig(targetConfig, apis.apis[i].id);
+        let needsSaving = false;
+        // Call the update delegate
+        if (apiConfig) {
+            const { api, plugins } = updateApiConfig(apiConfig.api, apiConfig.plugins);
+            apiConfig.api = api;
+            apiConfig.plugins = plugins;
+            needsSaving = true;
+        }
+        if (needsSaving) {
+            debug('API ' + apis.apis[i].id + ' updated.');
+            debug(apiConfig.api);
+            saveApiConfig(targetConfig, apis.apis[i].id, apiConfig);
+            debug('Reloaded: ');
+            debug(loadApiConfig(targetConfig, apis.apis[i].id).api);
+        }
+    }
+
+    // Also check all Authorization Servers for this setting.
+    var authServers = loadAuthServerList(targetConfig);
+    for (let i = 0; i < authServers.length; ++i) {
+        var authServerId = authServers[i];
+        var authServer = loadAuthServer(targetConfig, authServerId);
+        if (authServer.config && authServer.config.api) {
+            authServer.config.api = updateApiConfig(authServer.config.api);
+            saveAuthServer(targetConfig, authServerId, authServer);
+        }
+    }
+}
+
+/**
+ * Fix another little glitch when coming from a 0.10.x Kong configuration
+ * which uses the CORS plugin (origin --> origins in the plugin configuration)
+ */
+function updateStep7_Nov2017(targetConfig, sourceConfig, configKey) {
+    debug('Performing updateStep6_Aug2017()');
+
+    var targetGlobals = loadGlobals(targetConfig);
+    targetGlobals.version = 7;
+
+    updateApiConfigs(targetConfig, function (apiConfig, apiPlugins) {
+        // Check plugins
+        if (apiPlugins) {
+            for (let i = 0; i < apiPlugins.length; ++i) {
+                const p = apiPlugins[i];
+                if (p.name === "cors" && p.config && p.config.origin && !p.config.origins) {
+                    p.config.origins = p.config.origin;
+                    delete p.config.origin;
+                }
+            }
+        }
+        return { api: apiConfig, plugins: apiPlugins };
+    });
+
+    saveGlobals(targetConfig, targetGlobals);
 }
 
 /**
