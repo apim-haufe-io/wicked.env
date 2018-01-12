@@ -14,7 +14,8 @@ var updateSteps = {
     4: updateStep4_Mar2017,
     5: updateStep5_Apr2017,
     6: updateStep6_Aug2017,
-    7: updateStep7_Nov2017
+    7: updateStep7_Nov2017,
+    8: updateStep8_Dec2017
 };
 
 updater.updateConfig = function (staticConfigPath, initialStaticConfigPath, configKey) {
@@ -228,11 +229,45 @@ function updateStep7_Nov2017(targetConfig, sourceConfig, configKey) {
     saveGlobals(targetConfig, targetGlobals);
 }
 
+function updateStep8_Dec2017(targetConfig, sourceConfig, configKey) {
+    debug('Performing updateStep8_Dec2017()');
+
+    var targetGlobals = loadGlobals(targetConfig);
+    targetGlobals.version = 8;
+
+    if (!targetGlobals.kongAdapter) {
+        debug('Adding a default kongAdapter property.');
+        targetGlobals.kongAdapter = {
+            useKongAdapter: true,
+            ignoreList: ['plugin-name']
+        };
+    }
+
+    if (!targetGlobals.auth.oauth2) {
+        debug('Adding a default oauth2 property.');
+        targetGlobals.auth.oauth2 = {
+            useOauth2: false,
+            authorizationURL: 'https://identity.yourcompany.com/oauth2/authorize',
+            tokenURL: 'https://identity.yourcompany.com/oauth2/token',
+            clientID: 'this-is-your-client-id',
+            clientSecret: 'this-is-your-client-secret',
+            callbackURL: 'https://portal.yourcompany.com/oauth2/callback',
+            customIdField: 'upn',
+            firstNameField: 'given_name',
+            lastNameField: 'family_name',
+            emailField: 'email'
+        };
+    }
+    copyTextFile(path.join(sourceConfig.contentDir, 'wicked.css'), path.join(targetConfig.contentDir, 'wicked.css'));
+    saveGlobals(targetConfig, targetGlobals);
+}
+
+
 /**
  * Adapt the Kong configuration of the APIs to the new Kong API as of
  * Kong 0.10.x, most notably change request_uri to an array uris and
  * map strip_request_path to strip_uri.
- * 
+ *
  * Add a new section sessionStore to globals, prefill with 'file'.
  */
 function updateStep6_Aug2017(targetConfig, sourceConfig, configKey) {
