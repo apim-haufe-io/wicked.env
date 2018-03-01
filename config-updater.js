@@ -14,6 +14,8 @@ var updateSteps = {
     4: updateStep4_Mar2017,
     5: updateStep5_Apr2017,
     6: updateStep6_Aug2017,
+    7: updateStep7_Nov2017,
+    8: updateStep8_Dec2017,
     10: updateStep10_v1_0_0
 };
 
@@ -307,11 +309,109 @@ function updateStep10_v1_0_0(targetConfig, sourceConfig, configKey) {
     saveGlobals(targetConfig, targetGlobals);
 }
 
+function updateApiConfigs(targetConfig, updateApiConfig) {
+    debug('updateApiConfigs()');
+    const apis = loadApis(targetConfig);
+    for (let i = 0; i < apis.apis.length; ++i) {
+        const apiConfig = loadApiConfig(targetConfig, apis.apis[i].id);
+        let needsSaving = false;
+        // Call the update delegate
+        if (apiConfig) {
+            const { api, plugins } = updateApiConfig(apiConfig.api, apiConfig.plugins);
+            apiConfig.api = api;
+            apiConfig.plugins = plugins;
+            needsSaving = true;
+        }
+        if (needsSaving) {
+            debug('API ' + apis.apis[i].id + ' updated.');
+            debug(apiConfig.api);
+            saveApiConfig(targetConfig, apis.apis[i].id, apiConfig);
+            debug('Reloaded: ');
+            debug(loadApiConfig(targetConfig, apis.apis[i].id).api);
+        }
+    }
+
+    // Also check all Authorization Servers for this setting.
+    var authServers = loadAuthServerList(targetConfig);
+    for (let i = 0; i < authServers.length; ++i) {
+        var authServerId = authServers[i];
+        var authServer = loadAuthServer(targetConfig, authServerId);
+        if (authServer.config && authServer.config.api) {
+            const apiConfig = authServer.config;
+            const { api, plugins } = updateApiConfig(apiConfig.api, apiConfig.plugins);
+            apiConfig.api = api;
+            apiConfig.plugins = plugins;
+            saveAuthServer(targetConfig, authServerId, authServer);
+        }
+    }
+}
+
+/**
+ * Fix another little glitch when coming from a 0.10.x Kong configuration
+ * which uses the CORS plugin (origin --> origins in the plugin configuration)
+ */
+function updateStep7_Nov2017(targetConfig, sourceConfig, configKey) {
+    debug('Performing updateStep6_Aug2017()');
+
+    var targetGlobals = loadGlobals(targetConfig);
+    targetGlobals.version = 7;
+
+    updateApiConfigs(targetConfig, function (apiConfig, apiPlugins) {
+        // Check plugins
+        if (apiPlugins) {
+            for (let i = 0; i < apiPlugins.length; ++i) {
+                const p = apiPlugins[i];
+                if (p.name === "cors" && p.config && p.config.origin && !p.config.origins) {
+                    p.config.origins = p.config.origin;
+                    delete p.config.origin;
+                }
+            }
+        }
+        return { api: apiConfig, plugins: apiPlugins };
+    });
+
+    saveGlobals(targetConfig, targetGlobals);
+}
+
+function updateStep8_Dec2017(targetConfig, sourceConfig, configKey) {
+    debug('Performing updateStep8_Dec2017()');
+
+    var targetGlobals = loadGlobals(targetConfig);
+    targetGlobals.version = 8;
+
+    if (!targetGlobals.kongAdapter) {
+        debug('Adding a default kongAdapter property.');
+        targetGlobals.kongAdapter = {
+            useKongAdapter: true,
+            ignoreList: ['plugin-name']
+        };
+    }
+
+    if (!targetGlobals.auth.oauth2) {
+        debug('Adding a default oauth2 property.');
+        targetGlobals.auth.oauth2 = {
+            useOauth2: false,
+            authorizationURL: 'https://identity.yourcompany.com/oauth2/authorize',
+            tokenURL: 'https://identity.yourcompany.com/oauth2/token',
+            clientID: 'this-is-your-client-id',
+            clientSecret: 'this-is-your-client-secret',
+            callbackURL: 'https://portal.yourcompany.com/oauth2/callback',
+            customIdField: 'upn',
+            firstNameField: 'given_name',
+            lastNameField: 'family_name',
+            emailField: 'email'
+        };
+    }
+    copyTextFile(path.join(sourceConfig.contentDir, 'wicked.css'), path.join(targetConfig.contentDir, 'wicked.css'));
+    saveGlobals(targetConfig, targetGlobals);
+}
+
+
 /**
  * Adapt the Kong configuration of the APIs to the new Kong API as of
  * Kong 0.10.x, most notably change request_uri to an array uris and
  * map strip_request_path to strip_uri.
- * 
+ *
  * Add a new section sessionStore to globals, prefill with 'file'.
  */
 function updateStep6_Aug2017(targetConfig, sourceConfig, configKey) {
