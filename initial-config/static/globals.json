@@ -45,11 +45,15 @@
         "websiteKey": "reCaptchaWebsiteKey"
     },
     "kongAdapter": {
-    "useKongAdapter": true,
-    "ignoreList": [
-      "plugin-name"
-    ]
-   },
+        "useKongAdapter": true,
+        "ignoreList": [
+            "plugin-name"
+        ]
+    },
+    "apisIo": {
+        "useApisIo": false,
+        "apisIoUrl": "$PORTAL_APISIO_URL"
+    },
     "mailer": {
         "useMailer": false,
         "senderEmail": "apiportal@yourcompany.com",
