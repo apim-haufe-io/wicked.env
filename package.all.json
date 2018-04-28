@@ -38,7 +38,6 @@
     "bcrypt-nodejs": "0.0.3",
     "js-yaml": "3.6.0",
     "node-uuid": "1.4.7",
-    "pg": "7.4.0",
     "portal-env": "../portal-env.tgz",
     "nodemailer": "2.5.0",
     "fs-extra": "0.30.0",
