@@ -12,18 +12,32 @@ var cryptTools = require('./crypt-tools');
 
 var envReader = function () { };
 
+function checkStaticConfigDir(configDir) {
+    debug('checkStaticConfigDir(' + configDir + ')');
+    var globalFile = path.join(configDir, 'globals.json');
+    if (fs.existsSync(globalFile)) {
+        debug('Found file globals.json: ' + globalFile);
+        const resolvedDir = path.resolve(configDir);
+        debug('Resolved config dir: ' + resolvedDir);
+        return resolvedDir;
+    }
+    debug('File not found, invalid config dir: ' + globalFile);
+    return null;
+}
+
 envReader.resolveStaticConfig = function () {
     debug('resolveStaticConfig():');
     var configDir;
     if (process.env.PORTAL_API_STATIC_CONFIG) {
-        configDir = process.env.PORTAL_API_STATIC_CONFIG;
-    } else if (process.env.PORTAL_CONFIG_BASE) {
-        configDir = path.join(process.env.PORTAL_CONFIG_BASE, 'static');
-    } else {
-        configDir = '/var/portal-api/static';
+        configDir = checkStaticConfigDir(process.env.PORTAL_API_STATIC_CONFIG);
     }
-    var globalFile = path.join(configDir, 'globals.json');
-    if (!fs.existsSync(globalFile))
+    if (!configDir && process.env.PORTAL_CONFIG_BASE) {
+        configDir = checkStaticConfigDir(path.join(process.env.PORTAL_CONFIG_BASE, 'static'));
+    }
+    if (!configDir) {
+        configDir = checkStaticConfigDir('/var/portal-api/static');
+    }
+    if (!configDir)
         throw new Error('Could not resolve static configuration path; tried PORTAL_API_STATIC_CONFIG, checked PORTAL_CONFIG_BASE and /var/portal-api/static.');
     debug(configDir);
     return configDir;
@@ -162,9 +176,9 @@ function loadEnvironment(staticConfigPath, keyText, envName) {
 
     // This has to be done already now to be able to resolve the data directories.
     if (process.env.PORTAL_API_DYNAMIC_CONFIG)
-        process.env.PORTAL_API_DYNAMIC_CONFIG = replaceEnvVarsInString(process.env.PORTAL_API_DYNAMIC_CONFIG);
+        process.env.PORTAL_API_DYNAMIC_CONFIG = path.resolve(replaceEnvVarsInString(process.env.PORTAL_API_DYNAMIC_CONFIG));
     if (process.env.PORTAL_API_STATIC_CONFIG)
-        process.env.PORTAL_API_STATIC_CONFIG = replaceEnvVarsInString(process.env.PORTAL_API_STATIC_CONFIG);
+        process.env.PORTAL_API_STATIC_CONFIG = path.resolve(replaceEnvVarsInString(process.env.PORTAL_API_STATIC_CONFIG));
 }
 
 envReader.sanityCheckDir = function (dirName) {
