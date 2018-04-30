@@ -6,7 +6,7 @@
     "value": "http://${HELM_NAME}-chatbot.${K8S_NAMESPACE}.svc.cluster.local:3004"
   },
   "PORTAL_AUTHSERVER_URL": {
-    "value": "http://${HELM_NAME}-auth.${K8S_NAMESPACE}.svc.cluster.local:3004"
+    "value": "http://${HELM_NAME}-auth.${K8S_NAMESPACE}.svc.cluster.local:3010"
   },
   "PORTAL_KONG_ADAPTER_URL": {
     "value": "http://${HELM_NAME}-kong-adapter.${K8S_NAMESPACE}.svc.cluster.local:3002"

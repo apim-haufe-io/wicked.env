@@ -55,7 +55,7 @@
     },
     "PORTAL_AUTHSERVER_URL": {
         "encrypted": false,
-        "value": "http://portal-auth:3005"
+        "value": "http://portal-auth:3010"
     },
     "PORTAL_SESSIONSTORE_TYPE": {
         "encrypted": false,
