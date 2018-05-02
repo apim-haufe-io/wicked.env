@@ -5,8 +5,10 @@
 # automatically via portal-env being the base for all other docker images, but
 # if you need to update locally, try this.
 
-rm portal-env-*
-rm ../portal-env.tgz
+set -e
+
+rm -f portal-env-*
+rm -f ../portal-env.tgz
 
 npm pack
 mv portal-env-* ../portal-env.tgz
@@ -32,5 +34,3 @@ for wickedDir in \
         pushd ../$wickedDir > /dev/null && npm install ../../portal-env.tgz && popd > /dev/null 
     fi
 done
-
-exit 1
