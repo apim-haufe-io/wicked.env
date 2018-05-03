@@ -5,14 +5,44 @@
 # automatically via portal-env being the base for all other docker images, but
 # if you need to update locally, try this.
 
+echo "==== STARTING ==== $0"
+
+trap failure ERR
+
+function failure {
+    echo "=================="
+    echo "====  ERROR   ==== $0"
+    echo "=================="
+}
+
 set -e
 
-rm -f portal-env-*
-rm -f ../portal-env.tgz
+# Check whether jq is installed (should be)
+if ! which jq > /dev/null; then
+    echo "ERROR: This script requires 'jq' to be installed."
+    exit 1
+fi
 
-npm pack
-mv portal-env-* ../portal-env.tgz
-# npm cache add ../portal-env.tgz
+currentDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+pushd ${currentDir} > /dev/null
+
+envVersion=$(cat package.json | jq '.version' | tr -d '"')
+if [[ -z "${envVersion}" ]]; then
+    echo "ERROR: Could not retrieve portal-env version from package.json"
+    exit 1
+fi
+
+echo "INFO: Updating portal-env in repositories which needs it."
+echo "INFO: portal-env v${envVersion}"
+
+packageFile="portal-env-${envVersion}.tgz"
+logFile="wicked.portal-env/local-update-portal-env.log"
+rm -f portal-env-*
+rm -f ../${packageFile}
+
+npm pack > /dev/null
+echo "INFO: Package file: ${packageFile}"
+mv ${packageFile} ..
 
 for wickedDir in \
     "wicked.portal-api" \
@@ -20,17 +50,25 @@ for wickedDir in \
     "portal-api" \
     "portal-kickstarter"; do
 
-    if [ -d "../$wickedDir" ]; then 
-        echo Updating $wickedDir
-        pushd ../$wickedDir > /dev/null && npm install ../portal-env.tgz && popd > /dev/null 
+    if [ -d "../${wickedDir}" ]; then 
+        echo "INFO: Updating ${wickedDir}"
+        pushd ../${wickedDir} > /dev/null
+        npm install ../${packageFile} >> ../${logFile} 2&>1
+        popd > /dev/null 
     fi
 done
 
 for wickedDir in \
     "wicked.portal-test/portal-api"; do
 
-    if [ -d "../$wickedDir" ]; then 
-        echo Updating $wickedDir
-        pushd ../$wickedDir > /dev/null && npm install ../../portal-env.tgz && popd > /dev/null 
+    if [ -d "../${wickedDir}" ]; then 
+        echo "INFO: Updating ${wickedDir}"
+        pushd ../${wickedDir} > /dev/null
+        npm install ../../${packageFile} >> ../../${logFile} 2&>1
+        popd > /dev/null 
     fi
 done
+
+popd > /dev/null # currentDir
+
+echo "==== SUCCESS ==== $0"
