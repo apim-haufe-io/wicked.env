@@ -53,7 +53,7 @@ for wickedDir in \
     if [ -d "../${wickedDir}" ]; then 
         echo "INFO: Updating ${wickedDir}"
         pushd ../${wickedDir} > /dev/null
-        npm install ../${packageFile} >> ../${logFile} 2&>1
+        npm install ../${packageFile} >> ../${logFile}
         popd > /dev/null 
     fi
 done
@@ -64,7 +64,7 @@ for wickedDir in \
     if [ -d "../${wickedDir}" ]; then 
         echo "INFO: Updating ${wickedDir}"
         pushd ../${wickedDir} > /dev/null
-        npm install ../../${packageFile} >> ../../${logFile} 2&>1
+        npm install ../../${packageFile} >> ../../${logFile}
         popd > /dev/null 
     fi
 done
