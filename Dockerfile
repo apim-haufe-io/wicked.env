@@ -11,7 +11,7 @@ RUN set -x \
     && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
     && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
     && export GNUPGHOME="$(mktemp -d)" \
-    && gpg --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+    && gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
     && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
     && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu \
@@ -23,6 +23,7 @@ RUN mkdir -p /usr/src/portal-env /usr/src/app && chown -R wicked:wicked /usr/src
 USER wicked
 COPY . /usr/src/portal-env
 COPY package.all.json /usr/src/app/package.json
+COPY wicked-sdk.tgz /usr/src/app/wicked-sdk.tgz
 
 WORKDIR /usr/src/app
 RUN cd /usr/src/portal-env && npm pack && mv /usr/src/portal-env/portal-env-* /usr/src/portal-env.tgz && cd /usr/src/app

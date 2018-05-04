@@ -13,7 +13,52 @@ if [ -z "$DOCKER_TAG" ]; then
 fi
 
 git log -1 --decorate=short > git_last_commit
-git rev-parse --abbrev-ref HEAD > git_branch
+currentBranch=$(git rev-parse --abbrev-ref HEAD)
+echo "============================================"
+echo "INFO: Running on branch ${currentBranch}"
+echo ${currentBranch} > git_branch
+
+function hasBranch {
+    local testBranch; testBranch=$1
+    if [ -z "$(git branch -r | sed 's/^..//' | grep origin/${testBranch})" ]; then
+        return 1
+    fi
+    return 0
+}
+
+function resolveBranch {
+    local testBranch; testBranch=$1
+    local fallback1; fallback1=next
+    local fallback2; fallback2=master
+    if hasBranch ${testBranch}; then
+        echo ${testBranch}
+        return 0
+    elif hasBranch ${fallback1}; then
+        echo ${fallback1}
+        return 0
+    elif hasBranch ${fallback2}; then
+        echo ${fallback2}
+        return 0
+    fi
+    return 1
+}
+
+echo "============================================"
+echo "INFO: Checking out wicked.node-sdk and setting correct branch"
+rm -rf sdk-tmp
+mkdir -p sdk-tmp
+pushd sdk-tmp > /dev/null
+    git clone https://github.com/apim-haufe-io/wicked.node-sdk
+    pushd wicked.node-sdk
+        sdkBranch=$(resolveBranch ${currentBranch})
+        echo "INFO: Using branch ${sdkBranch} of wicked.node-sdk"
+        git checkout ${sdkBranch}
+        echo "INFO: Packing node SDK into wicked-sdk.tgz"
+        npm pack
+        cp -f wicked-sdk*.tgz ../../wicked-sdk.tgz
+        ls -la ../../wicked-sdk.tgz
+    popd > /dev/null # wicked.node-sdk
+popd > /dev/null # sdk-tmp
 
 echo "============================================"
 echo "Building normal image..."

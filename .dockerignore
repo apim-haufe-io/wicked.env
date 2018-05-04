@@ -4,3 +4,4 @@ node_modules
 Dockerfile
 Dockerfile-alpine
 build.sh
+sdk-tmp
