@@ -76,11 +76,5 @@
     "PORTAL_INITIALUSERS0_PASSWORD": {
         "encrypted": false,
         "value": "wicked"
-    },
-    "HELM_NAME": {
-        "value": "undefined-undefined"
-    },
-    "K8S_NAMESPACE": {
-        "value": "default"
     }
 }
