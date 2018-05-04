@@ -14,6 +14,11 @@ fi
 
 git log -1 --decorate=short > git_last_commit
 currentBranch=$(git rev-parse --abbrev-ref HEAD)
+if [[ -n "${BRANCH}" ]]; then
+    echo "============================================"
+    echo "INFO: Detecting BRANCH env var from Jenkins, using that"
+    currentBranch=${BRANCH}
+fi
 echo "============================================"
 echo "INFO: Running on branch ${currentBranch}"
 echo ${currentBranch} > git_branch
