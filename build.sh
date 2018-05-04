@@ -12,14 +12,12 @@ if [ -z "$DOCKER_TAG" ]; then
     export DOCKER_TAG=dev
 fi
 
-env
-
 git log -1 --decorate=short > git_last_commit
 currentBranch=$(git rev-parse --abbrev-ref HEAD)
-if [[ -n "${BRANCH}" ]]; then
+if [[ -n "${BRANCH_NAME}" ]]; then
     echo "============================================"
-    echo "INFO: Detecting BRANCH env var from Jenkins, using that"
-    currentBranch=${BRANCH}
+    echo "INFO: Detected BRANCH_NAME env var from Jenkins, using that"
+    currentBranch=${BRANCH_NAME}
 fi
 echo "============================================"
 echo "INFO: Running on branch ${currentBranch}"
@@ -77,8 +75,6 @@ pushd sdk-tmp > /dev/null
         ls -la ../../wicked-sdk.tgz
     popd > /dev/null # wicked.node-sdk
 popd > /dev/null # sdk-tmp
-
-exit 1
 
 echo "============================================"
 echo "Building normal image..."
