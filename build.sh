@@ -53,12 +53,25 @@ pushd sdk-tmp > /dev/null
         sdkBranch=$(resolveBranch ${currentBranch})
         echo "INFO: Using branch ${sdkBranch} of wicked.node-sdk"
         git checkout ${sdkBranch}
+
         echo "INFO: Packing node SDK into wicked-sdk.tgz"
-        npm pack
-        cp -f wicked-sdk*.tgz ../../wicked-sdk.tgz
+        cp -f ../../build/Dockerfile-build-sdk ./Dockerfile
+        docker build -t wicked-node-sdk:${currentBranch} .
+
+        echo "INFO: Copying wicked-sdk.tgz from builder image"
+        docker create --name wicked-node-sdk-${currentBranch} wicked-node-sdk:${currentBranch} > /dev/null
+        docker cp wicked-node-sdk-${currentBranch}:/usr/src/app/wicked-sdk.tgz ../../wicked-sdk.tgz
+
+        echo "INFO: Cleaning up..."
+        docker rm -f wicked-node-sdk-${currentBranch} > /dev/null
+        docker rmi wicked-node-sdk:${currentBranch} > /dev/null
+        echo ""
+        echo "INFO: Resulting wicked-sdk.tgz:"
         ls -la ../../wicked-sdk.tgz
     popd > /dev/null # wicked.node-sdk
 popd > /dev/null # sdk-tmp
+
+exit 1
 
 echo "============================================"
 echo "Building normal image..."

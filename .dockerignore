@@ -5,3 +5,4 @@ Dockerfile
 Dockerfile-alpine
 build.sh
 sdk-tmp
+build/*
