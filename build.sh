@@ -12,6 +12,8 @@ if [ -z "$DOCKER_TAG" ]; then
     export DOCKER_TAG=dev
 fi
 
+env
+
 git log -1 --decorate=short > git_last_commit
 currentBranch=$(git rev-parse --abbrev-ref HEAD)
 if [[ -n "${BRANCH}" ]]; then
