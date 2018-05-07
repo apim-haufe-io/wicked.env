@@ -44,18 +44,22 @@ npm pack > /dev/null
 echo "INFO: Package file: ${packageFile}"
 mv ${packageFile} ..
 
-for wickedDir in \
-    "wicked.portal-api" \
-    "wicked.portal-kickstarter" \
-    "portal-api" \
-    "portal-kickstarter"; do
+for prefix in "" "wicked."; do
+    for wickedDir in \
+        "portal-api" \
+        "portal" \
+        "portal-auth" \
+        "portal-mailer" \
+        "portal-chatbot" \
+        "portal-kickstarter"; do
 
-    if [ -d "../${wickedDir}" ]; then 
-        echo "INFO: Updating ${wickedDir}"
-        pushd ../${wickedDir} > /dev/null
-        npm install ../${packageFile} >> ../${logFile}
-        popd > /dev/null 
-    fi
+        if [ -d "../${prefix}${wickedDir}" ]; then 
+            echo "INFO: Updating ${prefix}${wickedDir}"
+            pushd ../${prefix}${wickedDir} > /dev/null
+            npm install ../${packageFile} >> ../${logFile}
+            popd > /dev/null 
+        fi
+    done
 done
 
 for wickedDir in \
