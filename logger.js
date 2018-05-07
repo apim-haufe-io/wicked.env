@@ -20,7 +20,7 @@ function makeLog(moduleName, log) {
     };
 }
 
-consoleLogger.info(makeLog('suggest:logger', `Setting up logging with log level "${logLevel}" (override with LOG_LEVEL)`));
+consoleLogger.info(makeLog('portal-env:logger', `Setting up logging with log level "${logLevel}" (override with LOG_LEVEL)`));
 
 const logger = (moduleName) => {
     return {

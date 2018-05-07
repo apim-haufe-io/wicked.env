@@ -2,7 +2,7 @@
 
 var fs = require('fs');
 var path = require('path');
-var debug = require('debug')('portal-env:config-updater');
+var { debug, info, warn, error } = require('./logger')('portal-env:config-updater');
 var cryptTools = require('./crypt-tools');
 
 var updater = function () { };
@@ -20,7 +20,7 @@ var updateSteps = {
 };
 
 updater.updateConfig = function (staticConfigPath, initialStaticConfigPath, configKey) {
-    debug('updateConfig() - Target: ' + staticConfigPath + ', Source: ' + initialStaticConfigPath);
+    info('updateConfig - Target: ' + staticConfigPath + ', Source: ' + initialStaticConfigPath);
     var targetConfig = makeConfigPaths(staticConfigPath);
     var sourceConfig = makeConfigPaths(initialStaticConfigPath);
 
@@ -29,7 +29,7 @@ updater.updateConfig = function (staticConfigPath, initialStaticConfigPath, conf
     if (targetGlobals.version)
         currentVersion = targetGlobals.version;
 
-    debug('Starting at config version: ' + currentVersion);
+    info('Starting at config version: ' + currentVersion);
 
     for (var step in updateSteps) {
         if (currentVersion < step)
@@ -37,6 +37,8 @@ updater.updateConfig = function (staticConfigPath, initialStaticConfigPath, conf
     }
 
     verifyConfigKey(staticConfigPath, configKey);
+
+    info('updateConfig finished.');
 };
 
 function verifyConfigKey(staticConfigPath, configKey) {
