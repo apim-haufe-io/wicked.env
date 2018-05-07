@@ -3,12 +3,13 @@
 var fs = require('fs');
 var os = require('os');
 var path = require('path');
-var debug = require('debug')('portal-env:env-reader');
+var { debug, info, warn, error } = require('./logger')('portal-env:env-reader');
 var request = require('request');
 var uuid = require('node-uuid');
 
 var configUpdater = require('./config-updater');
 var cryptTools = require('./crypt-tools');
+var logger = require('./logger');
 
 var envReader = function () { };
 
@@ -65,7 +66,7 @@ envReader.resolveApiUrl = function () {
     var apiUrl = process.env.PORTAL_API_URL;
     if (!apiUrl) {
         apiUrl = envReader.guessServiceUrl('portal-api', '3001');
-        console.log('Environment variable PORTAL_API_URL is not set, defaulting to ' + apiUrl + '. If this is not correct, please set before starting this process.');
+        warn('Environment variable PORTAL_API_URL is not set, defaulting to ' + apiUrl + '. If this is not correct, please set before starting this process.');
     }
     if (!apiUrl.endsWith('/')) // Add trailing slash
         apiUrl += '/';
@@ -81,7 +82,7 @@ envReader.checkEnvironment = function (staticConfigPath, keyText, envName) {
     debug('checkEnvironment() - ' + staticConfigPath + ', env: ' + envName);
     if (!keyText)
         throw new Error('ERROR: No configuration key was passed to checkEnvironment. As of wicked 0.11.4, this is no longer allowed.');
-    console.log('Reading config from: ' + staticConfigPath);
+    info('Reading config from: ' + staticConfigPath);
 
     // Assign local IP to special env var, if not running in Docker
     if (!process.env.WICKED_IN_DOCKER) {
@@ -122,9 +123,9 @@ function replaceEnvVarsInString(s) {
     while (foundVar) {
         iterCount++;
         if (iterCount > 10) {
-            console.error('Detected recursive use of env variables.');
-            console.error('Original string: ' + s);
-            console.error('Current string : ' + tempString);
+            error('Detected recursive use of env variables.');
+            error('Original string: ' + s);
+            error('Current string : ' + tempString);
             return tempString;
         }
         if (tempString.startsWith('$') &&
@@ -202,13 +203,13 @@ envReader.sanityCheckDir = function (dirName) {
     for (let envVarName in envDict) {
         if (!process.env.hasOwnProperty(envVarName)) {
             returnValue = false;
-            console.error('Environment variable "' + envVarName + '" is not defined, but used in the following files:');
+            error('Environment variable "' + envVarName + '" is not defined, but used in the following files:');
             var files = envDict[envVarName];
             for (var i = 0; i < files.length; ++i)
-                console.error(' * ' + files[i]);
+                error(' * ' + files[i]);
         } else {
             usedVars[envVarName] = true;
-            console.log('Checking env var ' + envVarName + ': OK');
+            info('Checking env var ' + envVarName + ': OK');
         }
     }
 
@@ -219,7 +220,7 @@ envReader.sanityCheckDir = function (dirName) {
             continue;
         if (envVarName == 'PORTAL_API_AESKEY')
             continue;
-        console.log('WARNING: Environment variable ' + envVarName + ' is defined but never used.');
+        warn('WARNING: Environment variable ' + envVarName + ' is defined but never used.');
     }
     return returnValue;
 };
@@ -338,5 +339,9 @@ envReader.CorrelationIdHandler = function () {
         return next();
     };
 };
+
+// ===== Logger =====
+
+envReader.Logger = logger;
 
 module.exports = envReader;
