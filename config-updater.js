@@ -16,7 +16,8 @@ var updateSteps = {
     6: updateStep6_Aug2017,
     7: updateStep7_Nov2017,
     8: updateStep8_Dec2017,
-    10: updateStep10_v1_0_0
+    10: updateStep10_v1_0_0a,
+    11: updateStep11_v1_0_0b
 };
 
 updater.updateConfig = function (staticConfigPath, initialStaticConfigPath, configKey) {
@@ -62,6 +63,7 @@ function makeConfigPaths(basePath) {
     var emailDir = path.join(templatesDir, 'email');
     var plansFile = path.join(basePath, 'plans', 'plans.json');
     var authServersDir = path.join(basePath, 'auth-servers');
+    var poolsDir = path.join(basePath, 'pools');
     var envDir = path.join(basePath, 'env');
 
     return {
@@ -75,6 +77,7 @@ function makeConfigPaths(basePath) {
         chatbotTemplates: path.join(templatesDir, 'chatbot.json'),
         plansFile: plansFile,
         authServersDir: authServersDir,
+        poolsDir: poolsDir,
         envDir: envDir
     };
 }
@@ -196,6 +199,33 @@ function saveKickstarter(config, kickData) {
 }
 
 /**
+ * Add a default registration pool 'wicked'
+ */
+function updateStep11_v1_0_0b(targetConfig, sourceConfig, configKey) {
+    debug('Performing updateStep11');
+
+    const targetGlobals = loadGlobals(targetConfig);
+    const sourceGlobals = loadGlobals(sourceConfig);
+    targetGlobals.version = 11;
+
+    if (!fs.existsSync(targetConfig.poolsDir)) {
+        debug(`Creating directory ${targetConfig.poolsDir}`);
+        fs.mkdirSync(targetConfig.poolsDir);
+    }
+
+    const targetWickedConfig = path.join(targetConfig.poolsDir, 'wicked.json');
+    const sourceWickedConfig = path.join(sourceConfig.poolsDir, 'wicked.json');
+    if (!fs.existsSync(targetWickedConfig)) {
+        debug(`Creating ${targetWickedConfig} (copying from initial config)`);
+        copyFile(sourceWickedConfig, targetWickedConfig);
+    } else {
+        debug(`File ${targetWickedConfig} already exists, not overwriting.`);
+    }
+
+    saveGlobals(targetConfig, targetGlobals);
+}
+
+/**
  * Adapt the scopes configuration inside API definitions to include
  * descriptions (default to the name of the scope for now).
  * 
@@ -205,7 +235,7 @@ function saveKickstarter(config, kickData) {
  * 
  * Add default Auth Server configuration
  */
-function updateStep10_v1_0_0(targetConfig, sourceConfig, configKey) {
+function updateStep10_v1_0_0a(targetConfig, sourceConfig, configKey) {
     debug('Performing updateStep6_Aug2017()');
 
     const targetGlobals = loadGlobals(targetConfig);
