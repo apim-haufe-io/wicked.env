@@ -553,6 +553,8 @@ function updateStep5_Apr2017(targetConfig, sourceConfig, configKey) {
         }
     };
 
+    // JSHint doesn't like the multiline formatting here, so we'll switch it off for a small section
+    /* jshint ignore:start */
     // Add views options
     targetGlobals.views = {
         apis: {
@@ -569,6 +571,7 @@ co-owners of the application. New co-owners must be already be registered in the
 in order to make them co-owners of the application.'
         }
     };
+    /* jshint ignore:end */
 
     // Add option to force redirection to HTTPS when website is called in HTTP
     targetGlobals.network.forceRedirectToHttps = false;
