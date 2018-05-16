@@ -49,6 +49,7 @@ for prefix in "" "wicked."; do
         "portal-api" \
         "portal" \
         "portal-auth" \
+        "portal-kong-adapter" \
         "portal-mailer" \
         "portal-chatbot" \
         "portal-kickstarter"; do
