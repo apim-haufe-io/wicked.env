@@ -19,9 +19,9 @@ let makeLog;
 
 let useJsonLogging = true;
 let remarkPlainLogging = false;
-if (process.env.LOG_PLAIN) {
+if (process.env.LOG_PLAIN && process.env.LOG_PLAIN !== 'false') {
     useJsonLogging = false;
-} else if (process.env.LOG_PLAIN !== 'false') {
+} else if (!process.env.LOG_PLAIN) {
     // Perhaps we'll default to plain logging anyway
     if (!isLinux) {
         remarkPlainLogging = true;
