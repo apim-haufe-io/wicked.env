@@ -3,7 +3,7 @@
     "name": "Portal Users",
     "properties": {
         "name": {
-            "description": "Full name of the user",
+            "description": "Your display name (e.g. given and last names)",
             "type": "string",
             "maxLength": 255,
             "minLength": 1,
