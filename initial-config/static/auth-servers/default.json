@@ -1,6 +1,5 @@
 {
-    "id": "default",
-    "name": "default",
+    "id": "default-auth",
     "desc": "Default Authorization Server",
     "authMethods": [
         {
@@ -17,7 +16,7 @@
     ],
     "config": {
         "api": {
-            "name": "portal-auth",
+            "name": "default-auth",
             "upstream_url": "$PORTAL_AUTHSERVER_URL",
             "preserve_host": false,
             "uris": [
