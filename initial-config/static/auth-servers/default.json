@@ -8,6 +8,7 @@
             "friendlyShort": "Username and Password",
             "friendlyLong": "Log in using a local username and password.",
             "config": {
+                "trustUsers": false,
                 "authorizeEndpoint": "/{{name}}/api/{{api}}/authorize",
                 "tokenEndpoint": "/{{name}}/api/{{api}}/token",
                 "profileEndpoint": "/profile"
