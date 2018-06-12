@@ -1,7 +1,7 @@
 {
     "version": 1,
     "title": "wicked.haufe.io API Portal",
-    "footer": "&copy; 2016 Your Company Ltd.",
+    "footer": "&copy; 2018 Your Company Ltd.",
     "api": {
         "headerName": "X-ApiKey"
     },
@@ -45,11 +45,11 @@
         "websiteKey": "reCaptchaWebsiteKey"
     },
     "kongAdapter": {
-    "useKongAdapter": true,
-    "ignoreList": [
-      "plugin-name"
-    ]
-   },
+        "useKongAdapter": true,
+        "ignoreList": [
+            "plugin-name"
+        ]
+    },
     "mailer": {
         "useMailer": false,
         "senderEmail": "apiportal@yourcompany.com",
@@ -84,52 +84,13 @@
     },
     "portal": {
         "authMethods": [
-            "default:local"
+            "default:local",
+            "default:google",
+            "default:github",
+            "default:twitter",
+            "default:oauth2",
+            "default:facebook",
+            "default:adfs"
         ]
-    },
-    "auth": {
-        "local": {
-            "useLocal": true,
-            "trustLocal": false
-        },
-        "adfs": {
-            "useAdfs": false,
-            "clientSecret": "this-is-your-client-secret",
-            "tokenURL": "https://identity.yourcompany.com/adfs/oauth2/token",
-            "customIdField": "upn",
-            "resource": "https://api.yourcompany.com",
-            "clientID": "this-is-your-client-id",
-            "lastNameField": "family_name",
-            "emailField": "email",
-            "firstNameField": "given_name",
-            "authorizationURL": "https://identity.yourcompany.com/adfs/oauth2/authorize",
-            "callbackURL": "https://portal.yourcompany.com/callback",
-            "verifyCert": true,
-            "publicCert": "----BEGIN CERTIFICATE-----\r\nfdkjhfkljdshglkdfhgklsdfhgkldsfhgkjsdfkgjhf\r\n------END----"
-        },
-        "github": {
-            "useGithub": false,
-            "clientSecret": "github-client-secret",
-            "clientID": "github-client-id",
-            "callbackURL": "https://portal.yourcompany.com/callback/github"
-        },
-        "google": {
-            "useGoogle": false,
-            "clientSecret": "google-client-secret",
-            "clientID": "google-app-client-id",
-            "callbackURL": "https://portal.yourcompany.com/callback/google"
-        },
-        "oauth2": {
-            "useOauth2": false,
-            "authorizationURL": "https://identity.yourcompany.com/oauth2/authorize",
-            "tokenURL": "https://identity.yourcompany.com/oauth2/token",
-            "clientID": "this-is-your-client-id",
-            "clientSecret": "this-is-your-client-secret",
-            "callbackURL": "https://portal.yourcompany.com/oauth2/callback",
-            "customIdField": "upn",
-            "firstNameField": "given_name",
-            "lastNameField": "family_name",
-            "emailField": "email"
-        }
     }
 }
