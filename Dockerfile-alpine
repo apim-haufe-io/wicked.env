@@ -1,4 +1,4 @@
-FROM node:8-alpine
+FROM node:10-alpine
 
 ENV GOSU_VERSION=1.10
 
@@ -35,7 +35,7 @@ COPY wicked-sdk.tgz /usr/src/app/wicked-sdk.tgz
 WORKDIR /usr/src/app
 RUN cd ../portal-env \
     && npm pack \
-    && mv portal-env-* ../portal-env.tgz \
+    && mv portal-env-* .. \
     && cd /usr/src/app \
     && npm install
 

@@ -1,4 +1,4 @@
-FROM node:8
+FROM node:10
 
 ENV GOSU_VERSION=1.10
 
@@ -26,7 +26,7 @@ COPY package.all.json /usr/src/app/package.json
 COPY wicked-sdk.tgz /usr/src/app/wicked-sdk.tgz
 
 WORKDIR /usr/src/app
-RUN cd /usr/src/portal-env && npm pack && mv /usr/src/portal-env/portal-env-* /usr/src/portal-env.tgz && cd /usr/src/app
+RUN cd /usr/src/portal-env && npm pack && mv /usr/src/portal-env/portal-env-* /usr/src && cd /usr/src/app
 RUN npm install
 
 # We install all node_modules in this base image; no need to do it later

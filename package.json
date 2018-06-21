@@ -4,9 +4,8 @@
   "author": "Martin Danielsson",
   "description": "Base package for the portal; contains all package dependencies to speed up Docker build.",
   "dependencies": {
-    "debug": "2.2.0",
     "node-uuid": "1.4.7",
-    "request": "2.74.0",
+    "request": "2.87.0",
     "winston": "^3.0.0-rc5"
   },
   "scripts": {
