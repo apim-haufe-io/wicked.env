@@ -51,10 +51,15 @@ if (process.argv.length > 2 && process.argv[2] === '--fix') {
     fixDependencies = true;
 }
 
+function sortObjectByProperties(o) {
+    const tmpString = JSON.stringify(o, Object.keys(o).sort());
+    return JSON.parse(tmpString);
+}
+
 // Re-add the portal-env we filtered out above
 allDependencies['portal-env'] = `file:../portal-env-${envVersion}.tgz`;
 
-envPackage.dependencies = allDependencies;
+envPackage.dependencies = sortObjectByProperties(allDependencies);
 
 console.log(JSON.stringify(envPackage, null, 2));
 
