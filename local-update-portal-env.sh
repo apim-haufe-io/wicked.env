@@ -44,35 +44,39 @@ npm pack > /dev/null
 echo "INFO: Package file: ${packageFile}"
 mv ${packageFile} ..
 
-for prefix in "" "wicked."; do
-    for wickedDir in \
-        "portal-api" \
-        "portal" \
-        "portal-auth" \
-        "portal-kong-adapter" \
-        "portal-mailer" \
-        "portal-chatbot" \
-        "portal-kickstarter"; do
+if [ "$1" = "--copy" ]; then
+    echo "INFO: Only copied package file; npm install has to be run later."
+else
+    for prefix in "" "wicked."; do
+        for wickedDir in \
+            "portal-api" \
+            "portal" \
+            "portal-auth" \
+            "portal-kong-adapter" \
+            "portal-mailer" \
+            "portal-chatbot" \
+            "portal-kickstarter"; do
 
-        if [ -d "../${prefix}${wickedDir}" ]; then 
-            echo "INFO: Updating ${prefix}${wickedDir}"
-            pushd ../${prefix}${wickedDir} > /dev/null
-            npm install ../${packageFile} >> ../${logFile}
+            if [ -d "../${prefix}${wickedDir}" ]; then 
+                echo "INFO: Updating ${prefix}${wickedDir}"
+                pushd ../${prefix}${wickedDir} > /dev/null
+                npm install ../${packageFile} >> ../${logFile}
+                popd > /dev/null 
+            fi
+        done
+    done
+
+    for wickedDir in \
+        "wicked.portal-test/portal-api"; do
+
+        if [ -d "../${wickedDir}" ]; then 
+            echo "INFO: Updating ${wickedDir}"
+            pushd ../${wickedDir} > /dev/null
+            npm install ../../${packageFile} >> ../../${logFile}
             popd > /dev/null 
         fi
     done
-done
-
-for wickedDir in \
-    "wicked.portal-test/portal-api"; do
-
-    if [ -d "../${wickedDir}" ]; then 
-        echo "INFO: Updating ${wickedDir}"
-        pushd ../${wickedDir} > /dev/null
-        npm install ../../${packageFile} >> ../../${logFile}
-        popd > /dev/null 
-    fi
-done
+fi
 
 popd > /dev/null # currentDir
 
