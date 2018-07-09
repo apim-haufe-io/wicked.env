@@ -17,7 +17,8 @@ var updateSteps = {
     7: updateStep7_Nov2017,
     8: updateStep8_Dec2017,
     10: updateStep10_v1_0_0a,
-    11: updateStep11_v1_0_0b
+    11: updateStep11_v1_0_0b,
+    12: updateStep12_v1_0_0c
 };
 
 updater.updateConfig = function (staticConfigPath, initialStaticConfigPath, configKey) {
@@ -199,6 +200,56 @@ function saveKickstarter(config, kickData) {
 }
 
 /**
+ * Add new env var PORTAL_ECHO_URL
+ */
+function updateStep12_v1_0_0c(targetConfig, sourceConfig, configKey) {
+    debug('Performing updateStep12');
+
+    const targetGlobals = loadGlobals(targetConfig);
+    const sourceGlobals = loadGlobals(sourceConfig);
+    targetGlobals.version = 11;
+
+
+    const updateEnv = function (source, target) {
+        let updated = false;
+        if (!target.PORTAL_ECHO_URL) {
+            debug('Adding ' + JSON.stringify(source.PORTAL_ECHO_URL));
+            target.PORTAL_ECHO_URL = source.PORTAL_ECHO_URL;
+            updated = true;            
+        }
+        return updated;
+    };
+
+    const sourceDefaultEnv = loadEnv(sourceConfig, 'default');
+
+    const targetDefaultEnv = loadEnv(targetConfig, 'default');
+    debug(targetDefaultEnv);
+    updateEnv(sourceDefaultEnv, targetDefaultEnv);
+    saveEnv(targetConfig, 'default', targetDefaultEnv);
+    debug(targetDefaultEnv);
+
+    // Also for k8s env
+    const sourceK8sEnv = loadEnv(sourceConfig, 'k8s');
+    if (existsEnv(targetConfig, 'k8s')) {
+        const targetK8sEnv = loadEnv(targetConfig, 'k8s');
+        if (updateEnv(sourceK8sEnv, targetK8sEnv))
+            saveEnv(targetConfig, 'k8s', targetK8sEnv);
+    }
+    // Don't update if there is no localhost env yet
+    if (existsEnv(targetConfig, 'localhost')) {
+        const localEnv = loadEnv(targetConfig, 'localhost');
+        if (!localEnv.PORTAL_ECHO_URL) {
+            localEnv.PORTAL_ECHO_URL = {
+                value: "http://${LOCAL_IP}:3009"
+            };
+            saveEnv(targetConfig, 'localhost', localEnv);
+        }
+    }
+
+    saveGlobals(targetConfig, targetGlobals);
+}
+
+/**
  * Add a default registration pool 'wicked'
  */
 function updateStep11_v1_0_0b(targetConfig, sourceConfig, configKey) {
@@ -317,15 +368,9 @@ function updateStep10_v1_0_0a(targetConfig, sourceConfig, configKey) {
     // Don't update if there is no localhost env yet
     if (existsEnv(targetConfig, 'localhost')) {
         const localEnv = loadEnv(targetConfig, 'localhost');
-        // Special handling of new components
-        // if (!localEnv.PORTAL_KONG_OAUTH2_URL) {
-        //     localEnv.PORTAL_KONG_OAUTH2_URL = {
-        //         value: "http://${LOCAL_IP}:3002"
-        //     };
-        // }
         if (!localEnv.PORTAL_AUTHSERVER_URL) {
             localEnv.PORTAL_AUTHSERVER_URL = {
-                value: "http://${LOCAL_IP}:3005"
+                value: "http://${LOCAL_IP}:3010"
             };
             saveEnv(targetConfig, 'localhost', localEnv);
         }

@@ -33,6 +33,10 @@
         "encrypted": false,
         "value": "http://portal-api:3001"
     },
+    "PORTAL_ECHO_URL": {
+        "encrypted": false,
+        "value": "http://portal-api:3009"
+    },
     "PORTAL_PORTAL_URL": {
         "encrypted": false,
         "value": "http://portal:3000"
