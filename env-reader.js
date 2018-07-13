@@ -1,21 +1,25 @@
 'use strict';
 
-var fs = require('fs');
-var os = require('os');
-var path = require('path');
-var { debug, info, warn, error } = require('./logger')('portal-env:env-reader');
-var request = require('request');
-var uuid = require('node-uuid');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const { debug, info, warn, error } = require('./logger')('portal-env:env-reader');
+const request = require('request');
+const uuid = require('node-uuid');
 
-var configUpdater = require('./config-updater');
-var cryptTools = require('./crypt-tools');
-var logger = require('./logger');
+const configUpdater = require('./config-updater');
+const cryptTools = require('./crypt-tools');
+const logger = require('./logger');
+const containerized = require('containerized');
 
-var envReader = function () { };
+const envReader = function () { };
+
+const isLinux = (os.platform() === 'linux');
+const isContainerized = isLinux && containerized();
 
 function checkStaticConfigDir(configDir) {
     debug('checkStaticConfigDir(' + configDir + ')');
-    var globalFile = path.join(configDir, 'globals.json');
+    const globalFile = path.join(configDir, 'globals.json');
     if (fs.existsSync(globalFile)) {
         debug('Found file globals.json: ' + globalFile);
         const resolvedDir = path.resolve(configDir);
@@ -28,7 +32,7 @@ function checkStaticConfigDir(configDir) {
 
 envReader.resolveStaticConfig = function () {
     debug('resolveStaticConfig():');
-    var configDir;
+    let configDir;
     if (process.env.PORTAL_API_STATIC_CONFIG) {
         configDir = checkStaticConfigDir(process.env.PORTAL_API_STATIC_CONFIG);
     }
@@ -52,9 +56,9 @@ envReader.getInitialConfigPath = function () {
 
 envReader.guessServiceUrl = function (defaultHost, defaultPort) {
     debug('guessServiceUrl() - defaultHost: ' + defaultHost + ', defaultPort: ' + defaultPort);
-    var url = 'http://' + defaultHost + ':' + defaultPort + '/';
-    // Are we not running on Linux? Then guess we're in local development mode.
-    if (os.type() != 'Linux') {
+    let url = 'http://' + defaultHost + ':' + defaultPort + '/';
+    // Are we not running containerized? Then guess we're in local development mode.
+    if (isContainerized) {
         let defaultLocalIP = getDefaultLocalIP();
         url = 'http://' + defaultLocalIP + ':' + defaultPort + '/';
     }
@@ -63,7 +67,7 @@ envReader.guessServiceUrl = function (defaultHost, defaultPort) {
 };
 
 envReader.resolveApiUrl = function () {
-    var apiUrl = process.env.PORTAL_API_URL;
+    let apiUrl = process.env.PORTAL_API_URL;
     if (!apiUrl) {
         apiUrl = envReader.guessServiceUrl('portal-api', '3001');
         warn('Environment variable PORTAL_API_URL is not set, defaulting to ' + apiUrl + '. If this is not correct, please set before starting this process.');
@@ -86,7 +90,7 @@ envReader.checkEnvironment = function (staticConfigPath, keyText, envName) {
 
     // Assign local IP to special env var, if not running in Docker
     if (!process.env.WICKED_IN_DOCKER) {
-        var localIpAddress = getDefaultLocalIP();
+        const localIpAddress = getDefaultLocalIP();
 
         // These variable names need to be "registered" in portal-kickstarter:utils.js 
         if (!process.env.LOCAL_IP)
@@ -117,9 +121,9 @@ function hasEnvVars(s) {
 }
 
 function replaceEnvVarsInString(s) {
-    var tempString = "" + s;
-    var foundVar = hasEnvVars(tempString);
-    var iterCount = 0;
+    let tempString = "" + s;
+    let foundVar = hasEnvVars(tempString);
+    let iterCount = 0;
     while (foundVar) {
         iterCount++;
         if (iterCount > 10) {
@@ -137,8 +141,8 @@ function replaceEnvVarsInString(s) {
             }
         } else {
             // Inline env var ${...}
-            var envRegExp = /\$\{([A-Za-z\_0-9]+)\}/g; // match ${VAR_NAME}
-            var match = envRegExp.exec(tempString);
+            const envRegExp = /\$\{([A-Za-z\_0-9]+)\}/g; // match ${VAR_NAME}
+            const match = envRegExp.exec(tempString);
             if (match) {
                 let envVarName = match[1]; // Capture group 1
                 // Replace regexp with value of env var
@@ -156,17 +160,17 @@ function replaceEnvVarsInString(s) {
 
 function loadEnvironment(staticConfigPath, keyText, envName) {
     debug('loadEnvironment() - ' + staticConfigPath);
-    var envFileName = path.join(staticConfigPath, 'env', envName + '.json');
+    const envFileName = path.join(staticConfigPath, 'env', envName + '.json');
     if (!fs.existsSync(envFileName))
         throw new Error('portal-env: Could not find environment file: ' + envFileName);
-    var envFile = JSON.parse(fs.readFileSync(envFileName, 'utf8'));
-    for (var varName in envFile) {
+    const envFile = JSON.parse(fs.readFileSync(envFileName, 'utf8'));
+    for (let varName in envFile) {
         if (process.env[varName]) {
-                debug('Environment variable ' + varName + ' is already set to "' + process.env[varName] + '". Skipping in this configuration.');
+            debug('Environment variable ' + varName + ' is already set to "' + process.env[varName] + '". Skipping in this configuration.');
             continue;
         }
-        var varProps = envFile[varName];
-        var varValue = varProps.value;
+        const varProps = envFile[varName];
+        let varValue = varProps.value;
         if (varProps.encrypted) {
             if (!keyText)
                 throw new Error('Cannot decrypt variable ' + varName + ', key was not supplied.');
@@ -185,7 +189,7 @@ function loadEnvironment(staticConfigPath, keyText, envName) {
 envReader.sanityCheckDir = function (dirName) {
     debug('sanityCheckDir() - ' + dirName);
     // Pre-fill some vars we always need
-    var envDict = {
+    const envDict = {
         PORTAL_API_STATIC_CONFIG: ['(implicit)'],
         PORTAL_API_DYNAMIC_CONFIG: ['(implicit)'],
         PORTAL_API_URL: ['(implicit)'],
@@ -197,15 +201,15 @@ envReader.sanityCheckDir = function (dirName) {
     };
     envReader.gatherEnvVarsInDir(dirName, envDict);
 
-    var returnValue = true;
-    var usedVars = {};
+    let returnValue = true;
+    const usedVars = {};
     // Check if every env var is set
     for (let envVarName in envDict) {
         if (!process.env.hasOwnProperty(envVarName)) {
             returnValue = false;
             error('Environment variable "' + envVarName + '" is not defined, but used in the following files:');
-            var files = envDict[envVarName];
-            for (var i = 0; i < files.length; ++i)
+            const files = envDict[envVarName];
+            for (let i = 0; i < files.length; ++i)
                 error(' * ' + files[i]);
         } else {
             usedVars[envVarName] = true;
@@ -232,10 +236,10 @@ envReader.sanityCheckDir = function (dirName) {
 // }
 envReader.gatherEnvVarsInDir = function (dirName, envDict) {
     debug('gatherEnvVarsInDir(): ' + dirName);
-    var fileNames = fs.readdirSync(dirName);
-    for (var i = 0; i < fileNames.length; ++i) {
-        var fileName = path.join(dirName, fileNames[i]);
-        var stat = fs.statSync(fileName);
+    const fileNames = fs.readdirSync(dirName);
+    for (let i = 0; i < fileNames.length; ++i) {
+        const fileName = path.join(dirName, fileNames[i]);
+        const stat = fs.statSync(fileName);
         if (stat.isFile() && fileName.endsWith('.json')) {
             gatherEnvVarsInFile(fileName, envDict);
         } else if (stat.isDirectory()) {
@@ -246,28 +250,28 @@ envReader.gatherEnvVarsInDir = function (dirName, envDict) {
 
 function gatherEnvVarsInFile(fileName, envDict) {
     debug('gatherEnvVarsInFile() - ' + fileName);
-    var ob = JSON.parse(fs.readFileSync(fileName, 'utf8'));
+    const ob = JSON.parse(fs.readFileSync(fileName, 'utf8'));
     gatherEnvVarsInObject(fileName, ob, envDict);
 }
 
 function gatherEnvVarsInObject(fileName, ob, envDict) {
-    var pushProperty = function (propName) {
+    const pushProperty = function (propName) {
         if (envDict.hasOwnProperty(propName))
             envDict[propName].push(fileName);
         else
             envDict[propName] = [fileName];
     };
-    for (var propName in ob) {
-        var propValue = ob[propName];
+    for (let propName in ob) {
+        const propValue = ob[propName];
         if (typeof propValue == "string" &&
             propValue.startsWith("$") &&
             !propValue.startsWith("${")) {
-            var envVarName = propValue.substring(1);
+            const envVarName = propValue.substring(1);
             pushProperty(envVarName);
         } else if (typeof propValue == "string" &&
             (propValue.indexOf('${') >= 0)) {
-            var envRegExp = /\$\{([A-Za-z\_0-9]+)\}/g; // match ${VAR_NAME}
-            var match = envRegExp.exec(propValue);
+            const envRegExp = /\$\{([A-Za-z\_0-9]+)\}/g; // match ${VAR_NAME}
+            let match = envRegExp.exec(propValue);
             while (match) {
                 pushProperty(match[1]); // Capturing group 1
                 match = envRegExp.exec(propValue);
@@ -282,7 +286,7 @@ const _TIMEOUT = 2000;
 function tryGet(url, maxTries, tryCounter, timeout, callback) {
     debug('Try #' + tryCounter + ' to GET ' + url + ' (timeout: ' + _TIMEOUT + 'ms)');
     request.get({ url: url, timeout: _TIMEOUT }, function (err, res, body) {
-        var isOk = true;
+        let isOk = true;
         if (err || res.statusCode != 200) {
             if (tryCounter < maxTries || maxTries < 0)
                 return setTimeout(tryGet, timeout, url, maxTries, tryCounter + 1, timeout, callback);
@@ -309,11 +313,11 @@ function getDefaultLocalIP() {
 
 function getLocalIPs() {
     debug('getLocalIPs()');
-    var interfaces = os.networkInterfaces();
-    var addresses = [];
-    for (var k in interfaces) {
-        for (var k2 in interfaces[k]) {
-            var address = interfaces[k][k2];
+    const interfaces = os.networkInterfaces();
+    const addresses = [];
+    for (let k in interfaces) {
+        for (let k2 in interfaces[k]) {
+            const address = interfaces[k][k2];
             if (address.family === 'IPv4' && !address.internal) {
                 addresses.push(address.address);
             }
@@ -329,7 +333,7 @@ envReader.Crypt = cryptTools;
 
 envReader.CorrelationIdHandler = function () {
     return function (req, res, next) {
-        var correlationId = req.get('correlation-id');
+        const correlationId = req.get('correlation-id');
         if (correlationId) {
             req.correlationId = correlationId;
             return next();

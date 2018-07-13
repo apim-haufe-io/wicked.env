@@ -2,15 +2,17 @@
 
 const winston = require('winston');
 const os = require('os');
+const containerized = require('containerized');
 
 const isLinux = (os.platform() === 'linux');
+const isContainerized = isLinux && containerized();
 
 let logLevel = 'info';
 if (process.env.LOG_LEVEL) {
     logLevel = process.env.LOG_LEVEL;
 } else {
-    // We'll set level debug if we're not on Linux
-    if (!isLinux)
+    // We'll set level debug if we're not containerized
+    if (!isContainerized)
         logLevel = 'debug';
 }
 
@@ -23,7 +25,7 @@ if (process.env.LOG_PLAIN && process.env.LOG_PLAIN !== 'false') {
     useJsonLogging = false;
 } else if (!process.env.LOG_PLAIN) {
     // Perhaps we'll default to plain logging anyway
-    if (!isLinux) {
+    if (!isContainerized) {
         remarkPlainLogging = true;
         useJsonLogging = false;
     }
@@ -46,7 +48,7 @@ if (useJsonLogging) {
 }
 
 if (remarkPlainLogging) {
-    consoleLogger.info(makeLog('portal-env:logger', 'Using plain logging format on non-Linux OS; override with LOG_PLAIN=false'));
+    consoleLogger.info(makeLog('portal-env:logger', 'Using plain logging format on non-containerized OS; override with LOG_PLAIN=false'));
 }
 consoleLogger.info(makeLog('portal-env:logger', `Setting up logging with log level "${logLevel}" (override with LOG_LEVEL)`));
 
