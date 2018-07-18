@@ -3,6 +3,7 @@
     "desc": "Default Authorization Server",
     "authMethods": [
         {
+            "enabled": true,
             "name": "local",
             "type": "local",
             "friendlyShort": "Username and Password",
@@ -12,7 +13,7 @@
             }
         },
         {
-            "enabled": "false",
+            "enabled": false,
             "name": "github",
             "type": "github",
             "friendlyShort": "GitHub",
@@ -23,7 +24,7 @@
             }
         },
         {
-            "enabled": "false",
+            "enabled": false,
             "name": "google",
             "type": "google",
             "friendlyShort": "Google",
@@ -34,7 +35,7 @@
             }
         },
         {
-            "enabled": "false",
+            "enabled": false,
             "name": "twitter",
             "type": "twitter",
             "friendlyShort": "Twitter",
@@ -45,7 +46,7 @@
             }
         },
         {
-            "enabled": "false",
+            "enabled": false,
             "name": "your-oauth2-change-this",
             "type": "oauth2",
             "friendlyShort": "Standard OAuth2",
@@ -64,7 +65,7 @@
             }
         },
         {
-            "enabled": "false",
+            "enabled": false,
             "name": "adfs",
             "type": "adfs",
             "friendlyShort": "ADFS",
