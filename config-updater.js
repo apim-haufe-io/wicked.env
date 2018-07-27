@@ -18,7 +18,8 @@ var updateSteps = {
     8: updateStep8_Dec2017,
     10: updateStep10_v1_0_0a,
     11: updateStep11_v1_0_0b,
-    12: updateStep12_v1_0_0c
+    12: updateStep12_v1_0_0c,
+    13: updateStep13_v1_0_0d,
 };
 
 updater.updateConfig = function (staticConfigPath, initialStaticConfigPath, configKey) {
@@ -200,6 +201,39 @@ function saveKickstarter(config, kickData) {
 }
 
 /**
+ * Remove config flag http_if_terminated from Kong configs of APIs.
+ */
+function updateStep13_v1_0_0d(targetConfig, sourceConfig, configKey) {
+    debug('Performing updateStep13');
+
+    const targetGlobals = loadGlobals(targetConfig);
+    targetGlobals.version = 13;
+
+    const apis = loadApis(targetConfig);
+    for (let i = 0; i < apis.apis.length; ++i) {
+        const thisApi = apis.apis[i];
+        const apiConfig = loadApiConfig(targetConfig, thisApi.id);
+        if (apiConfig.api.hasOwnProperty('http_if_terminated')) {
+            delete apiConfig.api.http_if_terminated;
+            saveApiConfig(targetConfig, thisApi.id, apiConfig);
+            info(`Removed property http_if_terminated from API ${thisApi.id} config.`);
+        }
+    }
+    const authServerNames = loadAuthServerList(targetConfig);
+    for (let i = 0; i < authServerNames.length; ++i) {
+        const asName = authServerNames[i];
+        const as = loadAuthServer(targetConfig, asName);
+        if (as.config && as.config.api && as.config.api.hasOwnProperty('http_if_terminated')) {
+            delete as.config.api.http_if_terminated;
+            saveAuthServer(targetConfig, asName, as);
+            info(`Removed property http_if_terminated from AuthServer ${asName} config.`);
+        }
+    }
+
+    saveGlobals(targetConfig, targetGlobals);
+}
+
+/**
  * Add new env var PORTAL_ECHO_URL
  */
 function updateStep12_v1_0_0c(targetConfig, sourceConfig, configKey) {
@@ -207,7 +241,7 @@ function updateStep12_v1_0_0c(targetConfig, sourceConfig, configKey) {
 
     const targetGlobals = loadGlobals(targetConfig);
     const sourceGlobals = loadGlobals(sourceConfig);
-    targetGlobals.version = 11;
+    targetGlobals.version = 12;
 
 
     const updateEnv = function (source, target) {
@@ -215,7 +249,7 @@ function updateStep12_v1_0_0c(targetConfig, sourceConfig, configKey) {
         if (!target.PORTAL_ECHO_URL) {
             debug('Adding ' + JSON.stringify(source.PORTAL_ECHO_URL));
             target.PORTAL_ECHO_URL = source.PORTAL_ECHO_URL;
-            updated = true;            
+            updated = true;
         }
         return updated;
     };
@@ -319,7 +353,7 @@ function updateStep10_v1_0_0a(targetConfig, sourceConfig, configKey) {
         targetGlobals.network.kongOAuth2Url = sourceGlobals.network.kongOAuth2Url;
     if (!targetGlobals.portal) // Default authMethods
         targetGlobals.portal = sourceGlobals.portal;
-        
+
     if (!fs.existsSync(targetConfig.authServersDir))
         fs.mkdirSync(targetConfig.authServersDir);
     const targetDefaultAuthServer = path.join(targetConfig.authServersDir, 'default.json');
@@ -338,7 +372,7 @@ function updateStep10_v1_0_0a(targetConfig, sourceConfig, configKey) {
         if (!target.PORTAL_AUTHSERVER_URL) {
             debug('Adding ' + JSON.stringify(source.PORTAL_AUTHSERVER_URL));
             target.PORTAL_AUTHSERVER_URL = source.PORTAL_AUTHSERVER_URL;
-            updated = true;            
+            updated = true;
         }
         return updated;
     };
