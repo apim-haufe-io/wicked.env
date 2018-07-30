@@ -31,6 +31,62 @@ if (process.env.LOG_PLAIN && process.env.LOG_PLAIN !== 'false') {
     }
 }
 
+const logDateKeeper = {
+    debug: {
+        logTime: new Date().getTime
+    },
+    info: {
+        logTime: new Date().getTime
+    },
+    warn: {
+        logTime: new Date().getTime
+    },
+    error: {
+        logTime: new Date().getTime
+    },
+};
+
+function chooseLogDateKeeper(level) {
+    switch (level) {
+        case 'error':
+            switch (logLevel) {
+                case 'error':
+                    return logDateKeeper.error;
+                case 'warn':
+                    return logDateKeeper.warn;
+                case 'info':
+                    return logDateKeeper.info;
+                default: return logDateKeeper.debug;
+            }
+            break;
+        case 'warn':
+            switch (logLevel) {
+                case 'error':
+                case 'warn':
+                    return logDateKeeper.warn;
+                case 'info':
+                    return logDateKeeper.info;
+                default:
+                    return logDateKeeper.debug;
+            }
+            break;
+
+        case 'info':
+            switch (logLevel) {
+                case 'error':
+                case 'warn':
+                case 'info':
+                    return logDateKeeper.info;
+                default:
+                    return logDateKeeper.debug;
+            }
+            break;
+
+        default:
+            return logDateKeeper.debug;
+    }
+}
+
 if (useJsonLogging) {
     makeLog = makeLogJson;
     consoleLogger = winston.createLogger({
@@ -55,19 +111,19 @@ consoleLogger.info(makeLog('portal-env:logger', `Setting up logging with log lev
 const logger = (moduleName) => {
     return {
         debug: (log) => {
-            consoleLogger.debug(makeLog(moduleName, log));
+            consoleLogger.debug(makeLog(moduleName, log, chooseLogDateKeeper('debug')));
         },
 
         info: (log) => {
-            consoleLogger.info(makeLog(moduleName, log));
+            consoleLogger.info(makeLog(moduleName, log, chooseLogDateKeeper('info')));
         },
 
         warn: (log) => {
-            consoleLogger.warn(makeLog(moduleName, log));
+            consoleLogger.warn(makeLog(moduleName, log, chooseLogDateKeeper('warn')));
         },
 
         error: (log) => {
-            consoleLogger.error(makeLog(moduleName, log));
+            consoleLogger.error(makeLog(moduleName, log, chooseLogDateKeeper('error')));
         }
     };
 };
@@ -75,7 +131,7 @@ const logger = (moduleName) => {
 // Log formatters
 
 // makeLogPlain makes debugging unit tests a lot easier
-function makeLogPlain(moduleName, log) {
+function makeLogPlain(moduleName, log, logDateKeeper) {
     let s = log;
     if (log && typeof (log) !== 'string')
         s = JSON.stringify(log);
@@ -87,18 +143,32 @@ function makeLogPlain(moduleName, log) {
     if (log && log.stack) {
         console.error(log);
     }
-    return `${moduleName.padEnd(30)} ${s}`;
+    let delta = '--';
+    if (logDateKeeper) {
+        const now = new Date().getTime();
+        delta = (now - logDateKeeper.logTime);
+        logDateKeeper.logTime = now;
+    }
+    return `[+${('' + delta).padStart(4)}ms] ${moduleName.padEnd(30)} ${s}`;
 }
 
 // This is the standard logger which always outputs a structured JSON
 // log.
-function makeLogJson(moduleName, log) {
+function makeLogJson(moduleName, log, logDateKeeper) {
     // level is not used here
-    return {
+    let delta = 0;
+    if (logDateKeeper) {
+        const now = new Date().getTime();
+        delta = (now - logDateKeeper.logTime);
+        logDateKeeper.logTime = now;
+    }
+    const logEntry = {
         date: new Date().toISOString(),
         module: moduleName,
-        message: log
+        message: log,
+        delta: delta
     };
+    return logEntry;
 }
 
 module.exports = logger;
