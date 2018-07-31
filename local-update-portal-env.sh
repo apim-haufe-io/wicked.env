@@ -67,7 +67,8 @@ else
     done
 
     for wickedDir in \
-        "wicked.portal-test/portal-api"; do
+        "wicked.portal-test/portal-api" \
+        "wicked.portal-test/portal-auth"; do
 
         if [ -d "../${wickedDir}" ]; then 
             echo "INFO: Updating ${wickedDir}"
