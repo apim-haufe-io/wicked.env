@@ -3,6 +3,8 @@ FROM node:10
 RUN mkdir -p /usr/src/app
 COPY . /usr/src/app
 WORKDIR /usr/src/app
-RUN npm pack && cp -f wicked-sdk-*.tgz wicked-sdk.tgz
+RUN npm install -g typescript
+RUN npm install
+RUN tsc && npm pack && cp -f wicked-sdk-*.tgz wicked-sdk.tgz
 
 CMD ["/bin/true"]
