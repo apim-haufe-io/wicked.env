@@ -3,6 +3,10 @@ body {
   padding-top: 40px;
 }
 
+body.wicked-auth {
+  background-color: #eeeeee;
+}
+
 a {
   color: #00B7FF;
 }
