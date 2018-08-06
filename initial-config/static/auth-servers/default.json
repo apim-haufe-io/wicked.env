@@ -75,8 +75,8 @@
                     "authorizeEndpoint": "https://your.idp.com/authorize",
                     "tokenEndpoint": "https://your.idp.com/token"
                 },
-                "clientId": "google-client-id",
-                "clientSecret": "google-client-secret",
+                "clientId": "adfs-client-id",
+                "clientSecret": "adfs-client-secret",
                 "resource": "https://api.yourcompany.com",
                 "customIdField": "upn",
                 "firstNameField": "given_name",
