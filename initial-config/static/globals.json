@@ -26,6 +26,13 @@
         "staticConfig": "$PORTAL_API_STATIC_CONFIG",
         "dynamicConfig": "$PORTAL_API_DYNAMIC_CONFIG"
     },
+    "storage": {
+        "type": "postgres",
+        "pgHost": "$PORTAL_STORAGE_PGHOST",
+        "pgPort": "5432",
+        "pgUser": "kong",
+        "pgPassword": "$PORTAL_STORAGE_PGPASSWORD"
+    },
     "initialUsers": [
         {
             "id": "1",

@@ -80,5 +80,11 @@
     "PORTAL_INITIALUSERS0_PASSWORD": {
         "encrypted": false,
         "value": "wicked"
+    },
+    "PORTAL_STORAGE_PGHOST": {
+        "value": "wicked-database"
+    },
+    "PORTAL_STORAGE_PGPASSWORD": {
+        "value": "kong"
     }
 }

@@ -20,6 +20,7 @@ var updateSteps = {
     11: updateStep11_v1_0_0b,
     12: updateStep12_v1_0_0c,
     13: updateStep13_v1_0_0d,
+    14: updateStep14_v1_0_0e,
 };
 
 updater.updateConfig = function (staticConfigPath, initialStaticConfigPath, configKey) {
@@ -198,6 +199,31 @@ function loadKickstarter(config) {
 function saveKickstarter(config, kickData) {
     debug('saveKickstarter()');
     fs.writeFileSync(path.join(config.basePath, 'kickstarter.json'), JSON.stringify(kickData, null, 2));
+}
+
+
+function updateStep14_v1_0_0e(targetConfig, sourceConfig, configKey) {
+    debug('Performing updateStep14');
+
+    const targetGlobals = loadGlobals(targetConfig);
+    const sourceGlobals = loadGlobals(sourceConfig);
+
+    targetGlobals.version = 14;
+    if (!targetGlobals.storage) {
+        targetGlobals.storage = sourceGlobals.storage;
+
+        const sourceDefaultEnv = loadEnv(sourceConfig, 'default');
+        const targetDefaultEnv = loadEnv(targetConfig, 'default');
+
+        if (!targetDefaultEnv.PORTAL_STORAGE_PGHOST)
+            targetDefaultEnv.PORTAL_STORAGE_PGHOST = sourceDefaultEnv.PORTAL_STORAGE_PGHOST;
+        if (!targetDefaultEnv.PORTAL_STORAGE_PGPASSWORD)
+            targetDefaultEnv.PORTAL_STORAGE_PGPASSWORD = sourceDefaultEnv.PORTAL_STORAGE_PGPASSWORD;
+
+        saveEnv(targetConfig, 'default', targetDefaultEnv);
+    }
+
+    saveGlobals(targetConfig, targetGlobals);
 }
 
 /**
