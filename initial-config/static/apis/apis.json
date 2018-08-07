@@ -27,7 +27,12 @@
                 "Sample"
             ],
             "auth": "oauth2",
-            "requiredGroup": "dev"
+            "requiredGroup": "dev",
+            "authMethods": [
+                "default:local",
+                "default:google",
+                "default:github"
+            ]
         }
     ],
     "_links": {

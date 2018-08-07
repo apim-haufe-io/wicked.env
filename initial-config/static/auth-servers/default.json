@@ -82,8 +82,11 @@
                 "firstNameField": "given_name",
                 "lastNameField": "family_name",
                 "emailField": "email",
-                "verifyCert": true,
-                "publicCert": "----BEGIN CERTIFICATE-----\r\nfdkjhfkljdshglkdfhgklsdfhgkldsfhgkjsdfkgjhf\r\n------END----"
+                "verifyCert": false,
+                "publicCert": "----BEGIN CERTIFICATE-----\r\nfdkjhfkljdshglkdfhgklsdfhgkldsfhgkjsdfkgjhf\r\n------END----",
+                "defaultGroups": {
+                    "DOMAIN\\_Some_Group": "dev"
+                }
             }
         }
     ],
