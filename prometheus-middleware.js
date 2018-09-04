@@ -74,7 +74,7 @@ const prometheusMiddleware = {
 
         const status5xx = new promClient.Counter({
             name: `${prefix}_status_5xx`,
-            help: 'Calls with status 4xx (but not 404)',
+            help: 'Calls with status 5xx',
             labelNames: ['method', 'route']
         });
 
