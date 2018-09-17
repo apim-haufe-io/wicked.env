@@ -5,6 +5,7 @@
     "api": {
         "headerName": "X-ApiKey"
     },
+    "passwordStrategy": "PW_6_24",
     "network": {
         "schema": "$PORTAL_NETWORK_SCHEMA",
         "apiHost": "$PORTAL_NETWORK_APIHOST",
