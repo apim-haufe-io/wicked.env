@@ -213,10 +213,10 @@ function updateStep18_v1_0_0i(targetConfig, sourceConfig, configKey) {
 
     if (!targetGlobals.api)
         targetGlobals.api = {};
-    if (!targetGlobals.hasOwnProperty('apiUserGroup'))
-        targetGlobals.apiUserGroup = sourceGlobals.api.apiUserGroup;
-    if (!targetGlobals.hasOwnProperty('echoUserGroup'))
-        targetGlobals.echoUserGroup = sourceGlobals.api.echoUserGroup;
+    if (!targetGlobals.api.hasOwnProperty('apiUserGroup'))
+        targetGlobals.api.apiUserGroup = sourceGlobals.api.apiUserGroup;
+    if (!targetGlobals.api.hasOwnProperty('echoUserGroup'))
+        targetGlobals.api.echoUserGroup = sourceGlobals.api.echoUserGroup;
 
     targetGlobals.version = 18;
 
