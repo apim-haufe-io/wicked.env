@@ -24,6 +24,7 @@ var updateSteps = {
     15: updateStep15_v1_0_0f,
     16: updateStep16_v1_0_0g,
     17: updateStep17_v1_0_0h,
+    18: updateStep18_v1_0_0i,
 };
 
 updater.updateConfig = function (staticConfigPath, initialStaticConfigPath, configKey) {
@@ -204,6 +205,24 @@ function saveKickstarter(config, kickData) {
     fs.writeFileSync(path.join(config.basePath, 'kickstarter.json'), JSON.stringify(kickData, null, 2));
 }
 
+function updateStep18_v1_0_0i(targetConfig, sourceConfig, configKey) {
+    debug('Performing updateStep18');
+
+    const targetGlobals = loadGlobals(targetConfig);
+    const sourceGlobals = loadGlobals(sourceConfig);
+
+    if (!targetGlobals.api)
+        targetGlobals.api = {};
+    if (!targetGlobals.hasOwnProperty('apiUserGroup'))
+        targetGlobals.apiUserGroup = sourceGlobals.api.apiUserGroup;
+    if (!targetGlobals.hasOwnProperty('echoUserGroup'))
+        targetGlobals.echoUserGroup = sourceGlobals.api.echoUserGroup;
+
+    targetGlobals.version = 18;
+
+    saveGlobals(targetConfig, targetGlobals);
+}
+
 function updateStep17_v1_0_0h(targetConfig, sourceConfig, configKey) {
     debug('Performing updateStep17');
 
@@ -217,7 +236,6 @@ function updateStep17_v1_0_0h(targetConfig, sourceConfig, configKey) {
 
     saveGlobals(targetConfig, targetGlobals);
 }
-
 
 function updateStep16_v1_0_0g(targetConfig, sourceConfig, configKey) {
     debug('Performing updateStep16');
