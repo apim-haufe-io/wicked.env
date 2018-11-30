@@ -68,6 +68,7 @@ else
 
     for wickedDir in \
         "wicked.portal-test/portal-api" \
+        "wicked.portal-test/portal-kong-adapter" \
         "wicked.portal-test/portal-auth"; do
 
         if [ -d "../${wickedDir}" ]; then 
