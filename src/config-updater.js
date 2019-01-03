@@ -290,7 +290,6 @@ function updateStep14_v1_0_0e(targetConfig, sourceConfig, configKey) {
                 updated = true;
             }
             if (!targetDefaultEnv.PORTAL_STORAGE_PGPASSWORD){
-                debug('Adding ' + JSON.stringify(source.PORTAL_STORAGE_PGPASSWORD));
                 targetDefaultEnv.PORTAL_STORAGE_PGPASSWORD = sourceDefaultEnv.PORTAL_STORAGE_PGPASSWORD;
                 updated = true;
             }
@@ -312,8 +311,8 @@ function updateStep14_v1_0_0e(targetConfig, sourceConfig, configKey) {
         // Don't update if there is no localhost env yet
         if (existsEnv(targetConfig, 'localhost')) {
             const localEnv = loadEnv(targetConfig, 'localhost');
-            if (!localEnv.PORTAL_ECHO_URL) {
-                localEnv.PORTAL_ECHO_URL = {
+            if (!localEnv.PORTAL_STORAGE_PGPASSWORD) {
+                localEnv.PORTAL_STORAGE_PGPASSWORD = {
                     value: "http://${LOCAL_IP}:5432"
                 };
                 saveEnv(targetConfig, 'localhost', localEnv);
