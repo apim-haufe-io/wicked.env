@@ -311,12 +311,17 @@ function updateStep14_v1_0_0e(targetConfig, sourceConfig, configKey) {
         // Don't update if there is no localhost env yet
         if (existsEnv(targetConfig, 'localhost')) {
             const localEnv = loadEnv(targetConfig, 'localhost');
-            if (!localEnv.PORTAL_STORAGE_PGPASSWORD) {
-                localEnv.PORTAL_STORAGE_PGPASSWORD = {
+            if (!localEnv.PORTAL_STORAGE_PGHOST) {
+                localEnv.PORTAL_STORAGE_PGHOST = {
                     value: "http://${LOCAL_IP}:5432"
                 };
-                saveEnv(targetConfig, 'localhost', localEnv);
             }
+            if (!localEnv.PORTAL_STORAGE_PGPASSWORD) {
+                localEnv.PORTAL_STORAGE_PGPASSWORD = {
+                    value: "wicked"
+                };
+            }
+            saveEnv(targetConfig, 'localhost', localEnv);
         }
 
     }
