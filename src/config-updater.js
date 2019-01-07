@@ -281,14 +281,51 @@ function updateStep14_v1_0_0e(targetConfig, sourceConfig, configKey) {
         const sourceDefaultEnv = loadEnv(sourceConfig, 'default');
         const targetDefaultEnv = loadEnv(targetConfig, 'default');
 
-        if (!targetDefaultEnv.PORTAL_STORAGE_PGHOST)
-            targetDefaultEnv.PORTAL_STORAGE_PGHOST = sourceDefaultEnv.PORTAL_STORAGE_PGHOST;
-        if (!targetDefaultEnv.PORTAL_STORAGE_PGPASSWORD)
-            targetDefaultEnv.PORTAL_STORAGE_PGPASSWORD = sourceDefaultEnv.PORTAL_STORAGE_PGPASSWORD;
 
+        const updateEnv = function (source, target) {
+            let updated = false;
+            if (!targetDefaultEnv.PORTAL_STORAGE_PGHOST){
+                debug('Adding ' + JSON.stringify(source.PORTAL_STORAGE_PGHOST));
+                targetDefaultEnv.PORTAL_STORAGE_PGHOST = sourceDefaultEnv.PORTAL_STORAGE_PGHOST;
+                updated = true;
+            }
+            if (!targetDefaultEnv.PORTAL_STORAGE_PGPASSWORD){
+                targetDefaultEnv.PORTAL_STORAGE_PGPASSWORD = sourceDefaultEnv.PORTAL_STORAGE_PGPASSWORD;
+                updated = true;
+            }
+            return updated;
+        };
+
+        debug(targetDefaultEnv);
+        updateEnv(sourceDefaultEnv, targetDefaultEnv);
         saveEnv(targetConfig, 'default', targetDefaultEnv);
-    }
+        debug(targetDefaultEnv);
 
+        // Also for k8s env
+        const sourceK8sEnv = loadEnv(sourceConfig, 'k8s');
+        if (existsEnv(targetConfig, 'k8s')) {
+            const targetK8sEnv = loadEnv(targetConfig, 'k8s');
+            if (updateEnv(sourceK8sEnv, targetK8sEnv))
+                saveEnv(targetConfig, 'k8s', targetK8sEnv);
+        }
+        // Don't update if there is no localhost env yet
+        if (existsEnv(targetConfig, 'localhost')) {
+            const localEnv = loadEnv(targetConfig, 'localhost');
+            if (!localEnv.PORTAL_STORAGE_PGHOST) {
+                localEnv.PORTAL_STORAGE_PGHOST = {
+                    value: "http://${LOCAL_IP}:5432"
+                };
+            }
+            if (!localEnv.PORTAL_STORAGE_PGPASSWORD) {
+                localEnv.PORTAL_STORAGE_PGPASSWORD = {
+                    value: "wicked"
+                };
+            }
+            saveEnv(targetConfig, 'localhost', localEnv);
+        }
+
+    }
+⁄
     saveGlobals(targetConfig, targetGlobals);
 }
 
