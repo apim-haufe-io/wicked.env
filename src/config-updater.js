@@ -284,13 +284,13 @@ function updateStep14_v1_0_0e(targetConfig, sourceConfig, configKey) {
 
         const updateEnv = function (source, target) {
             let updated = false;
-            if (!targetDefaultEnv.PORTAL_STORAGE_PGHOST){
+            if (!target.PORTAL_STORAGE_PGHOST) {
                 debug('Adding ' + JSON.stringify(source.PORTAL_STORAGE_PGHOST));
-                targetDefaultEnv.PORTAL_STORAGE_PGHOST = sourceDefaultEnv.PORTAL_STORAGE_PGHOST;
+                target.PORTAL_STORAGE_PGHOST = source.PORTAL_STORAGE_PGHOST;
                 updated = true;
             }
-            if (!targetDefaultEnv.PORTAL_STORAGE_PGPASSWORD){
-                targetDefaultEnv.PORTAL_STORAGE_PGPASSWORD = sourceDefaultEnv.PORTAL_STORAGE_PGPASSWORD;
+            if (!target.PORTAL_STORAGE_PGPASSWORD) {
+                target.PORTAL_STORAGE_PGPASSWORD = source.PORTAL_STORAGE_PGPASSWORD;
                 updated = true;
             }
             return updated;
@@ -313,19 +313,14 @@ function updateStep14_v1_0_0e(targetConfig, sourceConfig, configKey) {
             const localEnv = loadEnv(targetConfig, 'localhost');
             if (!localEnv.PORTAL_STORAGE_PGHOST) {
                 localEnv.PORTAL_STORAGE_PGHOST = {
-                    value: "http://${LOCAL_IP}:5432"
-                };
-            }
-            if (!localEnv.PORTAL_STORAGE_PGPASSWORD) {
-                localEnv.PORTAL_STORAGE_PGPASSWORD = {
-                    value: "wicked"
+                    value: "${LOCAL_IP}"
                 };
             }
             saveEnv(targetConfig, 'localhost', localEnv);
         }
 
     }
-⁄
+
     saveGlobals(targetConfig, targetGlobals);
 }
 
