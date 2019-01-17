@@ -23,7 +23,7 @@
         "type": "$PORTAL_SESSIONSTORE_TYPE",
         "host": "$PORTAL_SESSIONSTORE_HOST",
         "port": "$PORTAL_SESSIONSTORE_PORT",
-        "password": "$PORTAL_SESSIONSTORE_PASSWORD"
+        "password": ""
     },
     "db": {
         "staticConfig": "$PORTAL_API_STATIC_CONFIG",
