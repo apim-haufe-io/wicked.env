@@ -23,11 +23,11 @@
     },
     "PORTAL_NETWORK_APIHOST": {
         "encrypted": false,
-        "value": "api.portal.local"
+        "value": "api.portal.com"
     },
     "PORTAL_NETWORK_PORTALHOST": {
         "encrypted": false,
-        "value": "portal.local"
+        "value": "portal.com"
     },
     "PORTAL_API_URL": {
         "encrypted": false,
@@ -72,10 +72,6 @@
     "PORTAL_SESSIONSTORE_PORT": {
         "encrypted": false,
         "value": "6379"
-    },
-    "PORTAL_SESSIONSTORE_PASSWORD": {
-        "encrypted": false,
-        "value": ""
     },
     "PORTAL_INITIALUSERS0_PASSWORD": {
         "encrypted": false,

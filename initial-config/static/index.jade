@@ -1,4 +1,4 @@
-.jumbotron.wicked-index-title
+.jumbotron.wicked-index-title.mt-5
   .container.feature-container
     h1 #{title}
 
@@ -9,24 +9,24 @@
 
     p &nbsp;
 
-    a(href='http://wicked.haufe.io' target='_blank')
-      img(src='/images/wicked-256.png' alt='wicked.io').image-fluid.center-block
+    a(href='http://wicked.haufe.io' target='_blank' class='d-flex')
+      img(src='/images/wicked-256.png' alt='wicked.io').img-fluid.mx-auto
 
 .container
   .row.featurette
-    .col-md-7
+    .col-lg-7
       h2.featurette-heading
         if !authUser
-          | <a href='login'>Sign up</a> for the portal.
+          | <a href='signup'>Sign up</a> for the portal.
         else
           | Sign up for the Portal. 
         span.text-muted Create your personal user for this API Portal.
       p.lead
         | You can sign up using email and password, or using one of the supported social logins.
-    .col-md-5 &nbsp;
+    .col-lg-5 &nbsp;
   //hr.featurette-divider
   .row.featurette
-    .col-md-7.col-md-push-5
+    .col-lg-7.order-2
       h2.featurette-heading
         if !authUser
           | Register your application.
@@ -36,26 +36,26 @@
       p.lead
         | The application is what gets a subscription to an API, not the developer. Thus you need to register
         | an application first. This is the API client.  
-    .col-md-5.col-md-pull-7.pad80
-      img.featurette-image.img-responsive(src='content/images/arrow-right.png').pull-right
+    .col-lg-5.order-1.pad80
+      img.featurette-image.img-fluid(src='content/images/arrow-right.png').float-right
   //hr.featurette-divider
   .row.featurette
-    .col-md-7
+    .col-lg-7
       h2.featurette-heading
         | Subscribe to an API. 
         span.text-muted Find the API you need for your application.
       p.lead
         | From the <a href='apis'>APIs page</a>, select the API you need for your application. Select a plan,
         | and then subscribe to the API. This will give you credentials for accessing the API. 
-    .col-md-5.pad80
-      img.featurette-image.img-responsive.center-block(src='content/images/arrow-left.png').pull-left
+    .col-lg-5.pad80
+      img.featurette-image.img-fluid.mx-auto(src='content/images/arrow-left.png').float-left
   //hr.featurette-divider
   .row.featurette
-    .col-md-7.col-md-push-5
+    .col-lg-7.order-2
       h2.featurette-heading
         | Use the API. 
         span.text-muted Now you are set to use the API in your application.
       p.lead
         | With the provided credentials, you may now use the API from your application according to the plan you subscribed for.
-    .col-md-5.col-md-pull-7.pad80
-      img.featurette-image.img-responsive.center-block(src='content/images/arrow-right.png').pull-right
+    .col-md-5.order-1.pad80
+      img.featurette-image.img-fluid.mx-auto(src='content/images/arrow-right.png').float-right
