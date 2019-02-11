@@ -25,6 +25,7 @@ var updateSteps = {
     16: updateStep16_v1_0_0g,
     17: updateStep17_v1_0_0h,
     18: updateStep18_v1_0_0i,
+    19: updateStep19_v1_0_0j
 };
 
 updater.updateConfig = function (staticConfigPath, initialStaticConfigPath, configKey) {
@@ -204,6 +205,28 @@ function saveKickstarter(config, kickData) {
     debug('saveKickstarter()');
     fs.writeFileSync(path.join(config.basePath, 'kickstarter.json'), JSON.stringify(kickData, null, 2));
 }
+
+function updateStep19_v1_0_0j(targetConfig, sourceConfig, configKey) {
+    debug('Performing updateStep19');
+
+    const targetGlobals = loadGlobals(targetConfig);
+    targetGlobals.version = 19;
+
+    const sourceBoxEnv = loadEnv(sourceConfig, 'box');
+    if (!existsEnv(targetConfig, 'box')) {
+        saveEnv(targetConfig, 'box', sourceBoxEnv);
+    }
+
+    const kickstarter = loadKickstarter(targetConfig);
+    if (!kickstarter.envs.find(e => e === 'box')) {
+        // Add a k8s env
+        kickstarter.envs.push('box');
+        saveKickstarter(targetConfig, kickstarter);
+    }
+
+    saveGlobals(targetConfig, targetGlobals);
+}
+
 
 function updateStep18_v1_0_0i(targetConfig, sourceConfig, configKey) {
     debug('Performing updateStep18');
