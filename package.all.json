@@ -19,6 +19,7 @@
     "debug": "3.1.0",
     "express": "4.16.3",
     "express-session": "1.15.6",
+    "folder-hash": "2.1.2",
     "fs-extra": "0.30.0",
     "highlight.js": "9.3.0",
     "jade": "1.11.0",
