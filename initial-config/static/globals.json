@@ -16,6 +16,7 @@
         "portalUrl": "$PORTAL_PORTAL_URL",
         "kongAdapterUrl": "$PORTAL_KONG_ADAPTER_URL",
         "kongAdminUrl": "$PORTAL_KONG_ADMIN_URL",
+        "kongProxyUrl": "$PORTAL_KONG_PROXY_URL",
         "mailerUrl": "$PORTAL_MAILER_URL",
         "chatbotUrl": "$PORTAL_CHATBOT_URL"
     },

@@ -17,6 +17,9 @@
   "PORTAL_KONG_ADMIN_URL": {
     "value": "http://${HELM_NAME}-kong.${K8S_NAMESPACE}.svc.cluster.local:8001"
   },
+  "PORTAL_KONG_PROXY_URL": {
+    "value": "http://${HELM_NAME}-kong.${K8S_NAMESPACE}.svc.cluster.local:8000"
+  },
   "PORTAL_MAILER_URL": {
     "value": "http://${HELM_NAME}-mailer.${K8S_NAMESPACE}.svc.cluster.local:3003"
   },
