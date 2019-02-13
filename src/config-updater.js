@@ -216,6 +216,12 @@ function updateStep19_v1_0_0j(targetConfig, sourceConfig, configKey) {
     if (!existsEnv(targetConfig, 'box')) {
         saveEnv(targetConfig, 'box', sourceBoxEnv);
     }
+    const sourceDefaultEnv = loadEnv(sourceConfig, 'default');
+    const targetDefaultEnv = loadEnv(targetConfig, 'default');
+    if (!targetDefaultEnv.DOCKER_HOST) {
+        targetDefaultEnv.DOCKER_HOST = sourceDefaultEnv.DOCKER_HOST;
+        saveEnv(targetConfig, 'default', targetDefaultEnv);
+    }
 
     const kickstarter = loadKickstarter(targetConfig);
     if (!kickstarter.envs.find(e => e === 'box')) {
