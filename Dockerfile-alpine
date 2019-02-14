@@ -1,21 +1,17 @@
 FROM node:10-alpine
 
-ENV GOSU_VERSION=1.10
-
 RUN addgroup -S -g 888 wicked && adduser -S -G wicked -u 888 wicked \
     && set -x \
-    && apk add --no-cache --virtual \
-        dpkg \
-        gnupg \
+    && apk add --no-cache \
         openssl \
         git \
         bash \
         dumb-init \
-        gosu \
-    && rm -rf /var/cache/apk/* 
-
-RUN mkdir -p /usr/src/portal-env /usr/src/app && chown -R wicked:wicked /usr/src && \
-    mkdir -p /home/wicked && chown -R wicked:wicked /home/wicked
+        su-exec \
+    && mkdir -p /usr/src/portal-env /usr/src/app \
+    && chown -R wicked:wicked /usr/src \
+    && mkdir -p /home/wicked \
+    && chown -R wicked:wicked /home/wicked
 
 USER wicked
 COPY . /usr/src/portal-env
@@ -37,5 +33,5 @@ ONBUILD RUN if [ -d ".git" ]; then \
         git rev-parse --abbrev-ref HEAD > /usr/src/app/git_branch; \
     fi
 
-ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["npm", "start" ]

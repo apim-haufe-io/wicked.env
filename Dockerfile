@@ -1,7 +1,5 @@
 FROM node:10
 
-ENV GOSU_VERSION=1.10
-
 RUN groupadd -r wicked --gid=888 && useradd -r -g wicked --uid=888 wicked \
     && set -x \
     && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget gosu dumb-init \
@@ -29,5 +27,5 @@ ONBUILD RUN if [ -d ".git" ]; then \
         git rev-parse --abbrev-ref HEAD > /usr/src/app/git_branch; \
     fi
 
-ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["npm", "start" ]
