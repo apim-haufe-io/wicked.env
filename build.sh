@@ -61,7 +61,7 @@ pushd sdk-tmp > /dev/null
 
         echo "INFO: Packing node SDK into wicked-sdk.tgz"
         cp -f ../../build/Dockerfile-build-sdk ./Dockerfile
-        docker build -t wicked-node-sdk:${currentBranch} .
+        docker build -t wicked-node-sdk:${currentBranch} . --no-cache
 
         echo "INFO: Copying wicked-sdk.tgz from builder image"
         docker create --name wicked-node-sdk-${currentBranch} wicked-node-sdk:${currentBranch} > /dev/null
