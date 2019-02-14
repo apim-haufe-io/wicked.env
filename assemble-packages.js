@@ -57,7 +57,7 @@ function sortObjectByProperties(o) {
 }
 
 // Re-add the portal-env we filtered out above
-allDependencies['portal-env'] = `file:../portal-env-${envVersion}.tgz`;
+allDependencies['portal-env'] = `file:../portal-env.tgz`;
 // And wicked-sdk
 allDependencies['wicked-sdk'] = 'file:wicked-sdk.tgz';
 

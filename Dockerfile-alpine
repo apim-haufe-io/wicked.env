@@ -2,27 +2,17 @@ FROM node:10-alpine
 
 ENV GOSU_VERSION=1.10
 
-RUN addgroup -S -g 888 wicked && adduser -S -G wicked -u 888 wicked
-RUN set -x \
-    && apk add --no-cache --virtual .gosu-deps \
+RUN addgroup -S -g 888 wicked && adduser -S -G wicked -u 888 wicked \
+    && set -x \
+    && apk add --no-cache --virtual \
         dpkg \
         gnupg \
         openssl \
         git \
         bash \
-    && wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64 \
-    && chmod +x /usr/local/bin/dumb-init \
-    && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
-    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
-    && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
-    && export GNUPGHOME="$(mktemp -d)" \
-    && gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
-    && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
-    && chmod +x /usr/local/bin/gosu \
-    && gosu nobody true \
-    && apk del gnupg \
-    && rm -rf /var/cache/apk/*
+        dumb-init \
+        gosu \
+    && rm -rf /var/cache/apk/* 
 
 RUN mkdir -p /usr/src/portal-env /usr/src/app && chown -R wicked:wicked /usr/src && \
     mkdir -p /home/wicked && chown -R wicked:wicked /home/wicked
@@ -35,13 +25,11 @@ COPY wicked-sdk.tgz /usr/src/app/wicked-sdk.tgz
 WORKDIR /usr/src/app
 RUN cd ../portal-env \
     && npm pack \
-    && mv portal-env-* .. \
+    && mv portal-env-* ../portal-env.tgz \
     && cd /usr/src/app \
-    && npm install
+    && npm install --production
 
 # We install all node_modules in this base image; no need to do it later
-# ONBUILD COPY package.json /usr/src/app/
-# ONBUILD RUN npm install
 ONBUILD RUN date -u "+%Y-%m-%d %H:%M:%S" > /usr/src/app/build_date
 ONBUILD COPY . /usr/src/app
 ONBUILD RUN if [ -d ".git" ]; then \

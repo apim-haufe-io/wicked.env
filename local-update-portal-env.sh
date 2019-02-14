@@ -42,7 +42,8 @@ rm -f ../${packageFile}
 
 npm pack > /dev/null
 echo "INFO: Package file: ${packageFile}"
-mv ${packageFile} ..
+rm -f ../portal-env.tgz
+mv ${packageFile} ../portal-env.tgz
 
 if [ "$1" = "--copy" ]; then
     echo "INFO: Only copied package file; npm install has to be run later."
@@ -60,7 +61,7 @@ else
             if [ -d "../${prefix}${wickedDir}" ]; then 
                 echo "INFO: Updating ${prefix}${wickedDir}"
                 pushd ../${prefix}${wickedDir} > /dev/null
-                npm install ../${packageFile} >> ../${logFile}
+                npm install ../portal-env.tgz >> ../${logFile}
                 popd > /dev/null 
             fi
         done
@@ -74,7 +75,7 @@ else
         if [ -d "../${wickedDir}" ]; then 
             echo "INFO: Updating ${wickedDir}"
             pushd ../${wickedDir} > /dev/null
-            npm install ../../${packageFile} >> ../../${logFile}
+            npm install ../../portal-env.tgz >> ../../${logFile}
             popd > /dev/null 
         fi
     done
