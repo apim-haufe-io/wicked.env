@@ -33,10 +33,10 @@
     "storage": {
         "type": "postgres",
         "pgHost": "$PORTAL_STORAGE_PGHOST",
-        "pgPort": "5432",
-        "pgUser": "kong",
+        "pgPort": "$PORTAL_STORAGE_PGPORT",
+        "pgUser": "$PORTAL_STORAGE_PGUSER",
         "pgPassword": "$PORTAL_STORAGE_PGPASSWORD",
-        "pgDatabase": "wicked"
+        "pgDatabase": "$PORTAL_STORAGE_PGDATABASE"
     },
     "initialUsers": [
         {

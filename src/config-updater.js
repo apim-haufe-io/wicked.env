@@ -25,7 +25,8 @@ var updateSteps = {
     16: updateStep16_v1_0_0g,
     17: updateStep17_v1_0_0h,
     18: updateStep18_v1_0_0i,
-    19: updateStep19_v1_0_0j
+    19: updateStep19_v1_0_0j,
+    20: updateStep20_v1_0_0k
 };
 
 updater.updateConfig = function (staticConfigPath, initialStaticConfigPath, configKey) {
@@ -204,6 +205,49 @@ function loadKickstarter(config) {
 function saveKickstarter(config, kickData) {
     debug('saveKickstarter()');
     fs.writeFileSync(path.join(config.basePath, 'kickstarter.json'), JSON.stringify(kickData, null, 2));
+}
+
+function updateStep20_v1_0_0k(targetConfig, sourceConfig, configKey) {
+    debug('Performing updateStep19');
+
+    const targetGlobals = loadGlobals(targetConfig);
+    const sourceGlobals = loadGlobals(sourceConfig);
+    targetGlobals.version = 20;
+
+    const sourceDefaultEnv = loadEnv(sourceConfig, 'default');
+    const targetDefaultEnv = loadEnv(targetConfig, 'default');
+
+    let needsSave = false;
+    if (targetGlobals.storage) {
+        // Check if the defaults are still set in globals.json, and if so, make sure that they
+        // are replaced with overridable environment variables.
+        if (targetGlobals.storage.pgPort == '5432' && !targetDefaultEnv.hasOwnProperty('PORTAL_STORAGE_PGPORT')) {
+            // Replace with env var
+            targetGlobals.storage.pgPort = sourceGlobals.storage.pgPort;
+            targetDefaultEnv.PORTAL_STORAGE_PGPORT = sourceDefaultEnv.PORTAL_STORAGE_PGPORT;
+            needsSave = true;
+        }
+        if (targetGlobals.storage.pgUser == 'kong' && !targetDefaultEnv.hasOwnProperty('PORTAL_STORAGE_PGUSER')) {
+            targetGlobals.storage.pgUser = sourceGlobals.storage.pgUser;
+            targetDefaultEnv.PORTAL_STORAGE_PGUSER = sourceDefaultEnv.PORTAL_STORAGE_PGUSER;
+            needsSave = true;
+        }
+        if (targetGlobals.storage.pgDatabase == 'wicked' && !targetDefaultEnv.hasOwnProperty('PORTAL_STORAGE_PGDATABASE')) {
+            targetGlobals.storage.pgDatabase = sourceGlobals.storage.pgDatabase;
+            targetDefaultEnv.PORTAL_STORAGE_PGDATABASE = sourceDefaultEnv.PORTAL_STORAGE_PGDATABASE;
+            needsSave = true;
+        }
+    }
+
+    if (needsSave) {
+        info('Updated Postgres settings for wicked (introduced environment variables)');
+        saveEnv(targetConfig, 'default', targetDefaultEnv);
+        saveGlobals(targetConfig, targetGlobals);
+    }
+
+    // This has to be done in any case, to persist the updated version; it might be we
+    // do it twice here, but that's not so important.
+    saveGlobals(targetConfig, targetGlobals);
 }
 
 function updateStep19_v1_0_0j(targetConfig, sourceConfig, configKey) {

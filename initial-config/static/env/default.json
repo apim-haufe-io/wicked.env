@@ -84,8 +84,17 @@
     "PORTAL_STORAGE_PGHOST": {
         "value": "wicked-database"
     },
+    "PORTAL_STORAGE_PGUSER": {
+        "value": "kong"
+    },
     "PORTAL_STORAGE_PGPASSWORD": {
         "value": "kong"
+    },
+    "PORTAL_STORAGE_PGPORT": {
+        "value": "5432"
+    },
+    "PORTAL_STORAGE_PGDATABASE": {
+        "value": "wicked"
     },
     "DOCKER_HOST": {
         "value": "not-defined"
