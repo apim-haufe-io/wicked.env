@@ -45,7 +45,7 @@
     "portal-env": "file:../portal-env.tgz",
     "prom-client": "11.1.1",
     "redis": "2.8.0",
-    "request": "2.87.0",
+    "request": "2.88.0",
     "rimraf": "2.6.2",
     "saml2-js": "2.0.3",
     "serve-favicon": "2.5.0",
