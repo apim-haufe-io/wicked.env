@@ -5,7 +5,7 @@
   "description": "Base package for the portal; contains all package dependencies to speed up Docker build.",
   "dependencies": {
     "@types/node": "^10.3.2",
-    "async": "2.6.1",
+    "async": "2.6.2",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "1.18.3",
     "bootstrap": "3.4.1",
