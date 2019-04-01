@@ -533,7 +533,7 @@ function updateStep10_v1_0_0a(targetConfig, sourceConfig, configKey) {
         if (api.settings) {
             if (api.settings.scopes) {
                 const newScopes = {};
-                for (let scope in api.settings.scopes) {
+                for (let scope of api.settings.scopes) {
                     newScopes[scope] = { description: scope };
                 }
                 api.settings.scopes = newScopes;
