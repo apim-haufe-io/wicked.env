@@ -14,7 +14,8 @@ const dirs = [
     'wicked.kickstarter',
     'wicked.auth',
     'wicked.test/portal-api',
-    'wicked.test/portal-kong-adapter'
+    'wicked.test/portal-kong-adapter',
+    'wicked.test/portal-auth'
 ];
 
 const baseDir = path.resolve(path.join(__dirname, '..'));
