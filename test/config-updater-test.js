@@ -34,7 +34,8 @@ describe('config-updater', function () {
         assert.isUndefined(apiConfig.api.uris);
         assert.isUndefined(apiConfig.api.strip_uri);
         assert.isUndefined(apiConfig.api.preserve_host);
-        assert.isUndefined(apiConfig.plugins);
+        assert.isArray(apiConfig.plugins);
+        assert.strictEqual(apiConfig.plugins[0].config.origins, "*");
 
         assert.strictEqual(apiConfig.api.upstream_url, "http://petstore.swagger.io/v2");
         assert.strictEqual(apiConfig.api.name, "petstore-oauth");
@@ -46,8 +47,6 @@ describe('config-updater', function () {
         assert.strictEqual(apiConfig.api.routes[0].strip_uri, true);
         assert.strictEqual(apiConfig.api.routes[0].preserve_host, false);
         assert.isArray(apiConfig.api.routes[0].plugins);
-        assert.strictEqual(apiConfig.api.routes[0].plugins[0].config.origins, "*");
-
       });
   });
 });
