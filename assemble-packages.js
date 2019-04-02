@@ -138,7 +138,7 @@ if (fixDependencies) {
         }
         if (changedDep) {
             console.log(`Saving package.json in ${dirName}`);
-            fs.writeFileSync(pkgFile, JSON.stringify(pkg, null, 2), 'utf8');
+            fs.writeFileSync(pkgFile, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
         }
     }
 }
