@@ -5,7 +5,7 @@ RUN mkdir -p /usr/src/app
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN npm install -g typescript@$(jq .devDependencies.typescript package.json | tr -d '"')
-RUN npm ci
+RUN npm install --production
 RUN tsc && npm pack && cp -f wicked-sdk-*.tgz wicked-sdk.tgz
 
 CMD ["/bin/true"]
