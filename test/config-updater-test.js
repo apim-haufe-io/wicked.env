@@ -44,7 +44,7 @@ describe('config-updater', function () {
         assert.isArray(apiConfig.api.routes);
         assert.strictEqual(apiConfig.api.routes.length, 1);
 
-        assert.strictEqual(apiConfig.api.routes[0].strip_uri, true);
+        assert.strictEqual(apiConfig.api.routes[0].strip_path, true);
         assert.strictEqual(apiConfig.api.routes[0].preserve_host, false);
         assert.isArray(apiConfig.api.routes[0].plugins);
       });

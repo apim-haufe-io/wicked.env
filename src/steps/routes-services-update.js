@@ -5,7 +5,7 @@ module.exports = function (apiConfig) {
     const route = {};
 
     route.uris = apiConfig.api.uris;
-    route.strip_uri = apiConfig.api.strip_uri;
+    route.strip_path = apiConfig.api.strip_uri;
     route.preserve_host = apiConfig.api.preserve_host;
     route.plugins = [];
 
