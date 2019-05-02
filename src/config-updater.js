@@ -225,6 +225,21 @@ function updateStep21_MultiRoutes(targetConfig, sourceConfig, configKey) {
         saveApiConfig(targetConfig, thisApi.id, apiConfig);
     }
 
+    const authServerNames = loadAuthServerList(targetConfig);
+    for (let i = 0; i < authServerNames.length; ++i) {
+        const asName = authServerNames[i];
+        const as = loadAuthServer(targetConfig, asName);
+        if (as.config && as.config.api) {
+            const apiConfig = updateRouteServices( as.config );
+
+            info(`AuthServer ${asName} config`);
+
+            as.config = apiConfig;
+
+            saveAuthServer(targetConfig, asName, as);
+        }
+    }
+
     saveGlobals(targetConfig, targetGlobals);
 }
 
