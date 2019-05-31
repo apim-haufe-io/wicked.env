@@ -5,7 +5,7 @@ properties([
 ])
 
 //node('build-jenkins-4-test') {
-node('docker') {
+node('linux') {
 
     stage('Checkout') {
         checkout scm
