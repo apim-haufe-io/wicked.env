@@ -28,6 +28,7 @@
     "jsgrid": "1.5.3",
     "json-stringify-safe": "5.0.1",
     "jsonwebtoken": "5.7.0",
+    "ldapts": "1.9.0",
     "marked": "0.5.2",
     "mocha": "5.2.0",
     "morgan": "1.9.1",
