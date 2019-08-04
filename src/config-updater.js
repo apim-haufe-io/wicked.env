@@ -212,18 +212,17 @@ function updateStep21_v1_0_0i(targetConfig, sourceConfig, configKey) {
     debug("Performing updateStep21");
 
     const targetGlobals = loadGlobals(targetConfig);
-    const sourceGlobals = loadGlobals(sourceConfig);
     targetGlobals.version = 21;
 
-    const events = sourceConfig.chatbot.events;  // Copy old events to each new hook
+    const events = targetGlobals.chatbot.events;  // Copy old events to each new hook
     // Create new field with target values
     targetGlobals.chatbot.targets = [];
 
     // With this version the chatbot changed in a couple of ways
     // 1. Support has been added for ms teams and the structure has been changed to be extendible
     // 2. Events to notify for are now set on a per hook basis instead of global over all hooks
-    for (let i in sourceGlobals.chatbot.hookUrls) {
-        let hookUrl = sourceGlobals.chatbot.hookUrls[i];
+    for (let i = 0; i < targetGlobals.chatbot.hookUrls.length; i++) {
+        let hookUrl = targetGlobals.chatbot.hookUrls[i];
         targetGlobals.chatbot.targets.push({
            "type": "slack",
            "hookUrl": hookUrl,
