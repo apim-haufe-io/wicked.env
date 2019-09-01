@@ -216,28 +216,26 @@ function updateStep21_v1_0_0i(targetConfig, sourceConfig, configKey) {
 
     const events = targetGlobals.chatbot.events;  // Copy old events to each new hook
     // Check if this file already has a targets variable and skip its updating
-    if (targetGlobals.chatbot.hasOwnProperty("targets")) {
-        return;
+    if (!targetGlobals.chatbot.hasOwnProperty("targets")) {
+        // Create new field with target values
+        targetGlobals.chatbot.targets = [];
+
+        // With this version the chatbot changed in a couple of ways
+        // 1. Support has been added for ms teams and the structure has been changed to be extendible
+        // 2. Events to notify for are now set on a per hook basis instead of global over all hooks
+        for (let i = 0; i < targetGlobals.chatbot.hookUrls.length; i++) {
+            let hookUrl = targetGlobals.chatbot.hookUrls[i];
+            targetGlobals.chatbot.targets.push({
+                "type": "slack",
+                "hookUrl": hookUrl,
+                "events": events
+            });
+        }
+
+        // The old two properties can be deleted now.
+        delete targetGlobals.chatbot.events;
+        delete targetGlobals.chatbot.hookUrls;
     }
-    // Create new field with target values
-    targetGlobals.chatbot.targets = [];
-
-    // With this version the chatbot changed in a couple of ways
-    // 1. Support has been added for ms teams and the structure has been changed to be extendible
-    // 2. Events to notify for are now set on a per hook basis instead of global over all hooks
-    for (let i = 0; i < targetGlobals.chatbot.hookUrls.length; i++) {
-        let hookUrl = targetGlobals.chatbot.hookUrls[i];
-        targetGlobals.chatbot.targets.push({
-           "type": "slack",
-           "hookUrl": hookUrl,
-           "events": events
-        });
-    }
-
-    // The old two properties can be deleted now.
-    delete targetGlobals.chatbot.events;
-    delete targetGlobals.chatbot.hookUrls;
-
     saveGlobals(targetConfig, targetGlobals);
 }
 
