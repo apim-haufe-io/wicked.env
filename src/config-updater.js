@@ -26,7 +26,8 @@ var updateSteps = {
     17: updateStep17_v1_0_0h,
     18: updateStep18_v1_0_0i,
     19: updateStep19_v1_0_0j,
-    20: updateStep20_v1_0_0k
+    20: updateStep20_v1_0_0k,
+    21: updateStep21_v1_0_0i
 };
 
 updater.updateConfig = function (staticConfigPath, initialStaticConfigPath, configKey) {
@@ -207,8 +208,39 @@ function saveKickstarter(config, kickData) {
     fs.writeFileSync(path.join(config.basePath, 'kickstarter.json'), JSON.stringify(kickData, null, 2));
 }
 
+function updateStep21_v1_0_0i(targetConfig, sourceConfig, configKey) {
+    debug("Performing updateStep21");
+
+    const targetGlobals = loadGlobals(targetConfig);
+    targetGlobals.version = 21;
+
+    const events = targetGlobals.chatbot.events;  // Copy old events to each new hook
+    // Check if this file already has a targets variable and skip its updating
+    if (!targetGlobals.chatbot.hasOwnProperty("targets")) {
+        // Create new field with target values
+        targetGlobals.chatbot.targets = [];
+
+        // With this version the chatbot changed in a couple of ways
+        // 1. Support has been added for ms teams and the structure has been changed to be extendible
+        // 2. Events to notify for are now set on a per hook basis instead of global over all hooks
+        for (let i = 0; i < targetGlobals.chatbot.hookUrls.length; i++) {
+            let hookUrl = targetGlobals.chatbot.hookUrls[i];
+            targetGlobals.chatbot.targets.push({
+                "type": "slack",
+                "hookUrl": hookUrl,
+                "events": events
+            });
+        }
+
+        // The old two properties can be deleted now.
+        delete targetGlobals.chatbot.events;
+        delete targetGlobals.chatbot.hookUrls;
+    }
+    saveGlobals(targetConfig, targetGlobals);
+}
+
 function updateStep20_v1_0_0k(targetConfig, sourceConfig, configKey) {
-    debug('Performing updateStep19');
+    debug('Performing updateStep20');
 
     const targetGlobals = loadGlobals(targetConfig);
     const sourceGlobals = loadGlobals(sourceConfig);
