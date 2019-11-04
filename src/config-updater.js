@@ -214,9 +214,9 @@ function updateStep21_v1_0_0i(targetConfig, sourceConfig, configKey) {
     const targetGlobals = loadGlobals(targetConfig);
     targetGlobals.version = 21;
 
-    const events = targetGlobals.chatbot.events;  // Copy old events to each new hook
+    const events = targetGlobals.chatbot && targetGlobals.chatbot.events;  // Copy old events to each new hook
     // Check if this file already has a targets variable and skip its updating
-    if (!targetGlobals.chatbot.hasOwnProperty("targets")) {
+    if (targetGlobals.chatbot.targets === undefined) {
         // Create new field with target values
         targetGlobals.chatbot.targets = [];
 
