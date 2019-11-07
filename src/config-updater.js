@@ -56,6 +56,7 @@ function verifyConfigKey(staticConfigPath, configKey) {
     const globalData = JSON.parse(fs.readFileSync(path.join(staticConfigPath, 'globals.json'), 'utf8'));
     if (globalData.configKeyCheck) {
         const configKeyCheck = cryptTools.apiDecrypt(configKey, globalData.configKeyCheck);
+        debug('configKeyCheck: ' + configKeyCheck);
         const wickedCheckText = configKeyCheck.substring(40);
         if (wickedCheckText !== 'wicked')
             throw Error('Property configKeyCheck in globals.json did not contain expected check string; is your PORTAL_CONFIG_KEY wrong?.');
