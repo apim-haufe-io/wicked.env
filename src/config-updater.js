@@ -28,7 +28,8 @@ var updateSteps = {
     18: updateStep18_v1_0_0i,
     19: updateStep19_v1_0_0j,
     20: updateStep20_v1_0_0k,
-    21: updateStep21_MultiRoutes
+    21: updateStep21_MultiRoutes,
+    22: updateStep21_v1_0_0i
 };
 
 updater.updateConfig = function (staticConfigPath, initialStaticConfigPath, configKey) {
@@ -58,6 +59,7 @@ function verifyConfigKey(staticConfigPath, configKey) {
     const globalData = JSON.parse(fs.readFileSync(path.join(staticConfigPath, 'globals.json'), 'utf8'));
     if (globalData.configKeyCheck) {
         const configKeyCheck = cryptTools.apiDecrypt(configKey, globalData.configKeyCheck);
+        debug('configKeyCheck: ' + configKeyCheck);
         const wickedCheckText = configKeyCheck.substring(40);
         if (wickedCheckText !== 'wicked')
             throw Error('Property configKeyCheck in globals.json did not contain expected check string; is your PORTAL_CONFIG_KEY wrong?.');
@@ -210,12 +212,18 @@ function saveKickstarter(config, kickData) {
     fs.writeFileSync(path.join(config.basePath, 'kickstarter.json'), JSON.stringify(kickData, null, 2));
 }
 
+<<<<<<< HEAD
 function updateStep21_MultiRoutes(targetConfig, sourceConfig, configKey) {
     debug('Performing updateStep21_MultiRoutes');
+=======
+function updateStep21_v1_0_0i(targetConfig, sourceConfig, configKey) {
+    debug("Performing updateStep21");
+>>>>>>> 3956883e67197eddc572c78cf29eef6bfcab8d3a
 
     const targetGlobals = loadGlobals(targetConfig);
     targetGlobals.version = 21;
 
+<<<<<<< HEAD
     const apis = loadApis(targetConfig);
     for (let i = 0; i < apis.apis.length; ++i) {
         const thisApi = apis.apis[i];
@@ -240,11 +248,37 @@ function updateStep21_MultiRoutes(targetConfig, sourceConfig, configKey) {
         }
     }
 
+=======
+    if (targetGlobals.chatbot) {
+        const events = targetGlobals.chatbot.events;  // Copy old events to each new hook
+        // Check if this file already has a targets variable and skip its updating
+        if (targetGlobals.chatbot.targets === undefined) {
+            // Create new field with target values
+            targetGlobals.chatbot.targets = [];
+
+            // With this version the chatbot changed in a couple of ways
+            // 1. Support has been added for ms teams and the structure has been changed to be extendible
+            // 2. Events to notify for are now set on a per hook basis instead of global over all hooks
+            for (let i = 0; i < targetGlobals.chatbot.hookUrls.length; i++) {
+                let hookUrl = targetGlobals.chatbot.hookUrls[i];
+                targetGlobals.chatbot.targets.push({
+                    "type": "slack",
+                    "hookUrl": hookUrl,
+                    "events": events
+                });
+            }
+
+            // The old two properties can be deleted now.
+            delete targetGlobals.chatbot.events;
+            delete targetGlobals.chatbot.hookUrls;
+        }
+    }
+>>>>>>> 3956883e67197eddc572c78cf29eef6bfcab8d3a
     saveGlobals(targetConfig, targetGlobals);
 }
 
 function updateStep20_v1_0_0k(targetConfig, sourceConfig, configKey) {
-    debug('Performing updateStep19');
+    debug('Performing updateStep20');
 
     const targetGlobals = loadGlobals(targetConfig);
     const sourceGlobals = loadGlobals(sourceConfig);
