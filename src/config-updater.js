@@ -28,8 +28,8 @@ var updateSteps = {
     18: updateStep18_v1_0_0i,
     19: updateStep19_v1_0_0j,
     20: updateStep20_v1_0_0k,
-    21: updateStep21_MultiRoutes,
-    22: updateStep21_v1_0_0i
+    21: updateStep21_v1_0_0i,
+    22: updateStep21_MultiRoutes
 };
 
 updater.updateConfig = function (staticConfigPath, initialStaticConfigPath, configKey) {
