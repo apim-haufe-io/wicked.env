@@ -6,3 +6,4 @@ git_*
 sdk-tmp
 package-lock.json
 build_date
+.idea

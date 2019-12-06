@@ -82,21 +82,24 @@
     "chatbot": {
         "useChatbot": false,
         "username": "wicked.haufe.io",
-        "hookUrls": [
-            "https://yourinstance.slack.com/thisisahookurlyouneedtogetfromyourslackadmin"
-        ],
-        "icon_url": "https://raw.githubusercontent.com/Haufe-Lexware/wicked.haufe.io/master/public/wicked-40.png",
-        "events": {
-            "userSignedUp": true,
-            "userValidatedEmail": true,
-            "applicationAdded": true,
-            "applicationDeleted": true,
-            "subscriptionAdded": true,
-            "subscriptionDeleted": true,
-            "approvalRequired": true,
-            "lostPasswordRequest": true,
-            "verifyEmailRequest": true
-        }
+        "targets": [
+            {
+              "type": "slack",
+              "hookUrl": "https://yourinstance.slack.com/thisisahookurlyouneedtogetfromyourslackadmin",
+              "events": {
+                "userSignedUp": true,
+                "userValidatedEmail": true,
+                "applicationAdded": true,
+                "applicationDeleted": true,
+                "subscriptionAdded": true,
+                "subscriptionDeleted": true,
+                "approvalRequired": true,
+                "lostPasswordRequest": true,
+                "verifyEmailRequest": true
+              }
+            }
+          ],
+        "icon_url": "https://raw.githubusercontent.com/Haufe-Lexware/wicked.haufe.io/master/public/wicked-40.png"
     },
     "portal": {
         "authMethods": [
